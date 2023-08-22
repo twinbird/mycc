@@ -6,18 +6,18 @@
 #include <string.h>
 
 typedef enum {
-  TK_RESERVED,  // 記号
-  TK_NUM,       // 整数トークン
-  TK_EOF,       // 入力の終わり
+  TK_RESERVED, // 記号
+  TK_NUM,      // 整数トークン
+  TK_EOF,      // 入力の終わり
 } TokenKind;
 
 typedef struct Token Token;
 
 struct Token {
-  TokenKind kind;   // トークンの型
-  Token *next;      // 次の入力トークン
-  int val;          // kindがTK_NUMの場合、その数値
-  char *str;        // トークン文字列
+  TokenKind kind; // トークンの型
+  Token *next;    // 次の入力トークン
+  int val;        // kindがTK_NUMの場合、その数値
+  char *str;      // トークン文字列
 };
 
 // 現在着目しているトークン
@@ -76,9 +76,7 @@ int expect_number() {
   return val;
 }
 
-bool at_eof() {
-  return token->kind == TK_EOF;
-}
+bool at_eof() { return token->kind == TK_EOF; }
 
 // 新しいトークンを作成してcurへつなげる
 Token *new_token(TokenKind kind, Token *cur, char *str) {
