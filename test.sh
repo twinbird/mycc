@@ -26,5 +26,28 @@ assert 15 '5*(9-6)'
 assert 4 '(3+5)/2'
 assert 10 '-10+20'
 assert 2 '+2'
+# EQ
+assert 1 '1 == 1'
+assert 0 '1 == 2'
+assert 1 '(1+1) == 2'
+# NE
+assert 1 '1 != 2'
+assert 0 '1 != 1'
+# LT
+assert 1 '-1 < 0'
+assert 0 '0 < 0'
+assert 0 '1 < 0'
+# LE
+assert 1 '0 <= 0'
+assert 1 '-1 <= 0'
+assert 0 '1 <= 0'
+# GT
+assert 1 '0 > -1'
+assert 0 '0 > 0'
+assert 0 '0 > 1'
+# GE
+assert 1 '0 >= 0'
+assert 1 '1 >= 0'
+assert 0 '0 >= 1'
 
 echo OK
