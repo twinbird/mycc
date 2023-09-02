@@ -3,12 +3,14 @@
 // ====================
 // 入力プログラム
 extern char *user_input;
+void error(char *fmt, ...);
 
 // ====================
 // トークナイザ
 // ====================
 typedef enum {
   TK_RESERVED, // 記号
+  TK_IDENT,    // 識別子
   TK_NUM,      // 整数トークン
   TK_EOF,      // 入力の終わり
 } TokenKind;
@@ -41,6 +43,8 @@ typedef enum {
   ND_NE,  // !=
   ND_LT,  // <
   ND_LE,  // <=
+  ND_LVAR,// ローカル変数
+  ND_ASSIGN, // =
 } NodeKind;
 
 typedef struct Node Node;
@@ -50,6 +54,7 @@ struct Node {
   Node *lhs;     // 左辺
   Node *rhs;     // 右辺
   int val;       // kindがND_NUMの場合のみ利用
+  int offset;    // kindがND_LVARの場合のみ利用
 };
 Node *expr();
 
@@ -57,3 +62,7 @@ Node *expr();
 // コードジェネレータ
 // =============================
 void gen(Node *node);
+void program();
+
+// パース結果のノード
+extern Node *code[100];

@@ -1,10 +1,10 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdarg.h>
 #include "mycc.h"
+#include <ctype.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // ===========================
 // エラー表示
@@ -49,6 +49,17 @@ bool consume(char *op) {
     return false;
   token = token->next;
   return true;
+}
+
+// 現在着目しているトークンが識別子ならそれを返す
+// そうでなければNULLを返す
+Token *consume_ident() {
+  if (token->kind == TK_IDENT) {
+    Token *ret = token;
+    token = token->next;
+    return ret;
+  }
+  return NULL;
 }
 
 // 次のトークンが期待している記号の時には、トークンを1つ読み進める。
@@ -103,8 +114,14 @@ Token *tokenize(char *p) {
     }
 
     if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' ||
-        *p == ')' || *p == '<' || *p == '>') {
+        *p == ')' || *p == '<' || *p == '>' || *p == ';' || *p == '=') {
       cur = new_token(TK_RESERVED, cur, p++, 1);
+      continue;
+    }
+
+    if ('a' <= *p && *p <= 'z') {
+      cur = new_token(TK_IDENT, cur, p++, 1);
+      cur->len = 1;
       continue;
     }
 
@@ -124,6 +141,10 @@ Token *tokenize(char *p) {
 // =======================
 // 抽象構文木
 // =======================
+
+// パース結果のノード
+Node *code[100];
+
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
   Node *node = calloc(1, sizeof(Node));
   node->kind = kind;
@@ -139,11 +160,19 @@ Node *new_node_num(int val) {
   return node;
 }
 
-// primary = num | "(" expr ")"
+// primary = "(" expr ")" | ident | num
 Node *primary() {
   if (consume("(")) {
     Node *node = expr();
     expect(")");
+    return node;
+  }
+
+  Token *tok = consume_ident();
+  if (tok) {
+    Node *node = calloc(1, sizeof(Node));
+    node->kind = ND_LVAR;
+    node->offset = (tok->str[0] - 'a' + 1) * 8;
     return node;
   }
 
@@ -219,8 +248,27 @@ Node *equality() {
   }
 }
 
-// expr = equality
-Node *expr() {
+// assign = equality ("=" asssign)*
+Node *assign() {
   Node *node = equality();
+  if (consume("="))
+    node = new_node(ND_ASSIGN, node, assign());
   return node;
+}
+
+// expr = equality
+Node *expr() { return assign(); }
+
+// stmt = expr ";"
+Node *stmt() {
+  Node *node = expr();
+  expect(";");
+  return node;
+}
+
+void program() {
+  int i = 0;
+  while (!at_eof())
+    code[i++] = stmt();
+  code[i] = NULL;
 }
