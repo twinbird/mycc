@@ -30,6 +30,17 @@ extern Token *token;
 
 Token *tokenize(char *p);
 
+// ローカル変数
+typedef struct LVar LVar;
+struct LVar {
+  LVar *next;  // 次の変数かNULL
+  char *name;  // 変数の名前
+  int len;     // 名前の長さ
+  int offset;  // RBPからのオフセット
+};
+// ローカル変数のリスト
+extern LVar *locals;
+
 // =======================
 // 抽象構文木
 // =======================

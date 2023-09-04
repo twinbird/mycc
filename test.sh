@@ -54,5 +54,6 @@ assert 0 '0 >= 1;'
 assert 2 'a = 1+1;a;'
 assert 12 'b = (1+1) * 6;b;'
 assert 2 'a = 1+1;b = (1+1) * 6;a;'
+assert 3 'foo = 1; bar = 2; foo + bar;'
 
 echo OK
