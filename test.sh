@@ -56,4 +56,9 @@ assert 12 'b = (1+1) * 6;b;'
 assert 2 'a = 1+1;b = (1+1) * 6;a;'
 assert 3 'foo = 1; bar = 2; foo + bar;'
 
+# return
+assert 2 'a = 1; return 2; a;'
+assert 42 'a = 10; b = 32; return a + b; b;'
+assert 4 'a = 1; b = 2; 4;'
+
 echo OK
