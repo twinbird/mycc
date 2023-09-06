@@ -62,4 +62,8 @@ assert 42 'a = 10; b = 32; return a + b; b;'
 assert 4 'a = 1; b = 2; 4;'
 assert 2 'returnx = 1; x = 2; return x;'
 
+# if
+assert 2 'a = 1; if (a > 0) return 2; return 1;'
+assert 1 'a = 0; if (a > 0) return 2; return 1;'
+
 echo OK

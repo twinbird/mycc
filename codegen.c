@@ -5,6 +5,9 @@
 // コードジェネレータ
 // =============================
 
+// 分岐ラベルにつける数値
+int branch_label_counter;
+
 void gen_lval(Node *node) {
   if (node->kind != ND_LVAR)
     error("代入の左辺値が変数ではありません");
@@ -40,6 +43,15 @@ void gen(Node *node) {
     printf("  mov rsp, rbp\n");
     printf("  pop rbp\n");
     printf("  ret\n");
+    return;
+  case ND_IF:
+    gen(node->cond);
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    printf("  je  .Lend%d\n", branch_label_counter);
+    gen(node->lhs);
+    printf(".Lend%d:\n", branch_label_counter);
+    branch_label_counter++;
     return;
   }
 

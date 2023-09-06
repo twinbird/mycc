@@ -57,6 +57,7 @@ typedef enum {
   ND_LVAR,// ローカル変数
   ND_ASSIGN, // =
   ND_RETURN, // return
+  ND_IF, // if
 } NodeKind;
 
 typedef struct Node Node;
@@ -65,6 +66,7 @@ struct Node {
   NodeKind kind; // ノードの型
   Node *lhs;     // 左辺
   Node *rhs;     // 右辺
+  Node *cond;    // 条件式
   int val;       // kindがND_NUMの場合のみ利用
   int offset;    // kindがND_LVARの場合のみ利用
 };

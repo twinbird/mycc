@@ -133,6 +133,12 @@ Token *tokenize(char *p) {
       continue;
     }
 
+    if (strncmp(p, "if", 2) == 0 && !is_ident_char(p[2])) {
+      cur = new_token(TK_RESERVED, cur, p, 2);
+      p += 2;
+      continue;
+    }
+
     if (is_ident_first_char(*p)) {
       int n = 0;
       char *q = p;
@@ -313,6 +319,7 @@ Node *expr() { return assign(); }
 
 // stmt = expr ";"
 //      | "return" expr ";"
+//      | "if" "(" expr ")" stmt 
 Node *stmt() {
   Node *node;
 
@@ -320,6 +327,14 @@ Node *stmt() {
     node = calloc(1, sizeof(Node));
     node->kind = ND_RETURN;
     node->lhs = expr();
+  } else if (consume("if")) {
+    expect("(");
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_IF;
+    node->cond = expr();
+    expect(")");
+    node->lhs = stmt();
+    return node;
   } else {
     node = expr();
   }
