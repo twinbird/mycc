@@ -103,6 +103,14 @@ bool is_ident_char(char c) {
   return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || (c == '_');
 }
 
+bool is_reserve_word(char *p, char *word) {
+  int len = strlen(word);
+  if (strncmp(p, word, len) == 0 && !is_ident_char(p[len])) {
+    return true;
+  }
+  return false;
+}
+
 Token *tokenize(char *p) {
   Token head;
   head.next = NULL;
@@ -127,21 +135,27 @@ Token *tokenize(char *p) {
       continue;
     }
 
-    if (strncmp(p, "return", 6) == 0 && !is_ident_char(p[6])) {
-      cur = new_token(TK_RESERVED, cur, p, 6);
-      p += 6;
+    if (is_reserve_word(p, "return")) {
+      cur = new_token(TK_RESERVED, cur, p, strlen("return"));
+      p += strlen("return");
       continue;
     }
 
-    if (strncmp(p, "if", 2) == 0 && !is_ident_char(p[2])) {
-      cur = new_token(TK_RESERVED, cur, p, 2);
-      p += 2;
+    if (is_reserve_word(p, "if")) {
+      cur = new_token(TK_RESERVED, cur, p, strlen("if"));
+      p += strlen("if");
       continue;
     }
 
-    if (strncmp(p, "else", 4) == 0 && !is_ident_char(p[4])) {
-      cur = new_token(TK_RESERVED, cur, p, 4);
-      p += 4;
+    if (is_reserve_word(p, "else")) {
+      cur = new_token(TK_RESERVED, cur, p, strlen("else"));
+      p += strlen("else");
+      continue;
+    }
+
+    if (is_reserve_word(p, "while")) {
+      cur = new_token(TK_RESERVED, cur, p, strlen("while"));
+      p += strlen("while");
       continue;
     }
 
@@ -326,6 +340,7 @@ Node *expr() { return assign(); }
 // stmt = expr ";"
 //      | "return" expr ";"
 //      | "if" "(" expr ")" stmt 
+//      | "while" "(" expr ")" stmt
 Node *stmt() {
   Node *node;
 
@@ -333,24 +348,35 @@ Node *stmt() {
     node = calloc(1, sizeof(Node));
     node->kind = ND_RETURN;
     node->lhs = expr();
-  } else if (consume("if")) {
+    expect(";");
+    return node;
+  }
+
+  if (consume("if")) {
     expect("(");
     node = calloc(1, sizeof(Node));
     node->kind = ND_IF;
     node->cond = expr();
     expect(")");
     node->lhs = stmt();
-
     if (consume("else")) {
       node->rhs = stmt();
     }
-
     return node;
-  } else {
-    node = expr();
   }
-  expect(";");
 
+  if (consume("while")) {
+    expect("(");
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_WHILE;
+    node->cond = expr();
+    expect(")");
+    node->lhs = stmt();
+    return node;
+  }
+
+  node = expr();
+  expect(";");
   return node;
 }
 

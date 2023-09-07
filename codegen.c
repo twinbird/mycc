@@ -18,6 +18,11 @@ void gen_lval(Node *node) {
 }
 
 void gen(Node *node) {
+  int else_start_label;
+  int if_end_label;
+  int loop_start_label;
+  int loop_end_label;
+
   switch (node->kind) {
   case ND_NUM:
     printf("  push %d\n", node->val);
@@ -45,8 +50,8 @@ void gen(Node *node) {
     printf("  ret\n");
     return;
   case ND_IF:
-    int else_start_label = branch_label_counter++;
-    int if_end_label = branch_label_counter++;
+    else_start_label = branch_label_counter++;
+    if_end_label = branch_label_counter++;
 
     gen(node->cond);
     if (node->rhs) {
@@ -66,6 +71,19 @@ void gen(Node *node) {
       gen(node->lhs);
     }
     printf(".LifEnd%d:\n", if_end_label);
+    return;
+  case ND_WHILE:
+    loop_start_label = branch_label_counter++;
+    loop_end_label = branch_label_counter++;
+
+    printf(".LloopStart%d:\n", loop_start_label);
+    gen(node->cond);
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    printf("  je  .LloopEnd%d\n", loop_end_label);
+    gen(node->lhs);
+    printf("  jmp .LloopStart%d\n", loop_start_label);
+    printf(".LloopEnd%d:\n", loop_end_label);
     return;
   }
 

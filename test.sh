@@ -76,4 +76,8 @@ assert 1 'a=0; if (3>2) a=1; else if (2>3) a=2; else a=99; return a;'
 assert 2 'a=0; if (1>2) a=1; else if (4>3) a=2; else a=99; return a;'
 assert 99 'a=0; if (1>2) a=1; else if (2>3) a=2; else a=99; return a;'
 
+# while
+assert 3 'i = 0; while(i < 3) i = i + 1; return i;'
+assert 2 'i = 2; while(i < 2) i = i + 1; return i;'
+
 echo OK
