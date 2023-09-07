@@ -85,6 +85,27 @@ void gen(Node *node) {
     printf("  jmp .LloopStart%d\n", loop_start_label);
     printf(".LloopEnd%d:\n", loop_end_label);
     return;
+  case ND_FOR:
+    loop_start_label = branch_label_counter++;
+    loop_end_label = branch_label_counter++;
+
+    if (node->init) {
+      gen(node->init);
+    }
+    printf(".LloopStart%d:\n", loop_start_label);
+    if (node->cond) {
+      gen(node->cond);
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  je  .LloopEnd%d\n", loop_end_label);
+    }
+    gen(node->lhs);
+    if (node->post) {
+      gen(node->post);
+    }
+    printf("  jmp .LloopStart%d\n", loop_start_label);
+    printf(".LloopEnd%d:\n", loop_end_label);
+    return;
   }
 
   gen(node->lhs);

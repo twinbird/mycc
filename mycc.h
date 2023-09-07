@@ -59,6 +59,7 @@ typedef enum {
   ND_RETURN, // return
   ND_IF, // if
   ND_WHILE, // while
+  ND_FOR, // for
 } NodeKind;
 
 typedef struct Node Node;
@@ -68,6 +69,8 @@ struct Node {
   Node *lhs;     // 左辺
   Node *rhs;     // 右辺
   Node *cond;    // 条件式
+  Node *init;    // forループの初期化式
+  Node *post;    // forループの更新式
   int val;       // kindがND_NUMの場合のみ利用
   int offset;    // kindがND_LVARの場合のみ利用
 };

@@ -159,6 +159,12 @@ Token *tokenize(char *p) {
       continue;
     }
 
+    if (is_reserve_word(p, "for")) {
+      cur = new_token(TK_RESERVED, cur, p, strlen("for"));
+      p += strlen("for");
+      continue;
+    }
+
     if (is_ident_first_char(*p)) {
       int n = 0;
       char *q = p;
@@ -341,6 +347,7 @@ Node *expr() { return assign(); }
 //      | "return" expr ";"
 //      | "if" "(" expr ")" stmt 
 //      | "while" "(" expr ")" stmt
+//      | "for" "(" expr? ";" expr? ";" expr? ")" stmt
 Node *stmt() {
   Node *node;
 
@@ -371,6 +378,26 @@ Node *stmt() {
     node->kind = ND_WHILE;
     node->cond = expr();
     expect(")");
+    node->lhs = stmt();
+    return node;
+  }
+
+  if (consume("for")) {
+    expect("(");
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_FOR;
+    if (!consume(";")) {
+      node->init = expr();
+      expect(";");
+    }
+    if (!consume(";")) {
+      node->cond = expr();
+      expect(";");
+    }
+    if (!consume(")")) {
+      node->post = expr();
+      expect(")");
+    }
     node->lhs = stmt();
     return node;
   }
