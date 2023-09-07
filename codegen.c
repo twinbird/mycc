@@ -45,13 +45,27 @@ void gen(Node *node) {
     printf("  ret\n");
     return;
   case ND_IF:
+    int else_start_label = branch_label_counter++;
+    int if_end_label = branch_label_counter++;
+
     gen(node->cond);
-    printf("  pop rax\n");
-    printf("  cmp rax, 0\n");
-    printf("  je  .Lend%d\n", branch_label_counter);
-    gen(node->lhs);
-    printf(".Lend%d:\n", branch_label_counter);
-    branch_label_counter++;
+    if (node->rhs) {
+      // if - else
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  je  .LelseStart%d\n", else_start_label);
+      gen(node->lhs);
+      printf("  jmp .LifEnd%d\n", if_end_label);
+      printf(".LelseStart%d:\n", else_start_label);
+      gen(node->rhs);
+    } else {
+      // if 
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  je  .LifEnd%d\n", if_end_label);
+      gen(node->lhs);
+    }
+    printf(".LifEnd%d:\n", if_end_label);
     return;
   }
 

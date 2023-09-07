@@ -65,5 +65,15 @@ assert 2 'returnx = 1; x = 2; return x;'
 # if
 assert 2 'a = 1; if (a > 0) return 2; return 1;'
 assert 1 'a = 0; if (a > 0) return 2; return 1;'
+assert 3 'a = 3; if (a > 0) if (2 > 1) return a; return 1;'
+assert 1 'a = 1; if (a > 0) if (1 > 2) return 2; return a;'
+assert 2 'if (0 > 1) return 1; if (1 > 0) return 2;'
+
+# if - else
+assert 2 'a = 1; b = 2; if (a > b) return a; else return b;'
+assert 3 'a = 3; b = 2; if (a > b) return a; else return b;'
+assert 1 'a=0; if (3>2) a=1; else if (2>3) a=2; else a=99; return a;'
+assert 2 'a=0; if (1>2) a=1; else if (4>3) a=2; else a=99; return a;'
+assert 99 'a=0; if (1>2) a=1; else if (2>3) a=2; else a=99; return a;'
 
 echo OK

@@ -139,6 +139,12 @@ Token *tokenize(char *p) {
       continue;
     }
 
+    if (strncmp(p, "else", 4) == 0 && !is_ident_char(p[4])) {
+      cur = new_token(TK_RESERVED, cur, p, 4);
+      p += 4;
+      continue;
+    }
+
     if (is_ident_first_char(*p)) {
       int n = 0;
       char *q = p;
@@ -334,6 +340,11 @@ Node *stmt() {
     node->cond = expr();
     expect(")");
     node->lhs = stmt();
+
+    if (consume("else")) {
+      node->rhs = stmt();
+    }
+
     return node;
   } else {
     node = expr();
