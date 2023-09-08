@@ -64,7 +64,7 @@ void gen(Node *node) {
       printf(".LelseStart%d:\n", else_start_label);
       gen(node->rhs);
     } else {
-      // if 
+      // if
       printf("  pop rax\n");
       printf("  cmp rax, 0\n");
       printf("  je  .LifEnd%d\n", if_end_label);

@@ -100,7 +100,8 @@ bool is_ident_first_char(char c) {
 }
 
 bool is_ident_char(char c) {
-  return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || (c == '_');
+  return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') ||
+         ('0' <= c && c <= '9') || (c == '_');
 }
 
 bool is_reserve_word(char *p, char *word) {
@@ -345,7 +346,7 @@ Node *expr() { return assign(); }
 
 // stmt = expr ";"
 //      | "return" expr ";"
-//      | "if" "(" expr ")" stmt 
+//      | "if" "(" expr ")" stmt
 //      | "while" "(" expr ")" stmt
 //      | "for" "(" expr? ";" expr? ";" expr? ")" stmt
 Node *stmt() {
