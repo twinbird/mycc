@@ -106,6 +106,16 @@ void gen(Node *node) {
     printf("  jmp .LloopStart%d\n", loop_start_label);
     printf(".LloopEnd%d:\n", loop_end_label);
     return;
+  case ND_BLOCK:
+    for (int i = 0; node->stmts[i]; i++) {
+      gen(node->stmts[i]);
+      printf("  pop rax\n");
+    }
+    return;
+  case ND_FCALL:
+    printf("  call %s\n", node->fname);
+    printf("  push rax\n");
+    return;
   }
 
   gen(node->lhs);

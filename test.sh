@@ -4,8 +4,9 @@ assert() {
   expected="$1"
   input="$2"
 
+  cc -c test.c -o test.o
   ./mycc "$input" > tmp.s
-  cc -o tmp tmp.s
+  cc -o tmp tmp.s test.o
   ./tmp
   actual="$?"
 
@@ -85,5 +86,13 @@ assert 3 'sum = 0; for (i = 0; i < 3; i = i + 1) sum = sum + i;'
 assert 1 'sum = 0; for (i=0;;) return 1;'
 assert 1 'i=0;for (;i!=1;) i=1; return i;'
 assert 5 'sum=0; for(;;sum = sum + 1) if (sum > 4) return sum;'
+
+# block
+assert 3 '{ i = 0; i = 3; return i;}'
+assert 2 'i = 0; if (1 < 0) { i = 1; return i; } else if (1 > 0) { i = 2;return i; }'
+
+# func call
+assert 1 'return foo();'
+assert 2 'return bar();'
 
 echo OK

@@ -60,19 +60,23 @@ typedef enum {
   ND_IF, // if
   ND_WHILE, // while
   ND_FOR, // for
+  ND_BLOCK, // { }のコードブロック
+  ND_FCALL, // 関数呼び出し
 } NodeKind;
 
 typedef struct Node Node;
 
 struct Node {
-  NodeKind kind; // ノードの型
-  Node *lhs;     // 左辺
-  Node *rhs;     // 右辺
-  Node *cond;    // 条件式
-  Node *init;    // forループの初期化式
-  Node *post;    // forループの更新式
-  int val;       // kindがND_NUMの場合のみ利用
-  int offset;    // kindがND_LVARの場合のみ利用
+  NodeKind kind;      // ノードの型
+  Node *lhs;          // 左辺
+  Node *rhs;          // 右辺
+  Node *cond;         // 条件式
+  Node *init;         // forループの初期化式
+  Node *post;         // forループの更新式
+  Node *stmts[100];   // ND_BLOCKの場合に利用
+  int val;            // kindがND_NUMの場合のみ利用
+  int offset;         // kindがND_LVARの場合のみ利用
+  char fname[100];    // kindがND_FCALLの場合関数名
 };
 Node *expr();
 
