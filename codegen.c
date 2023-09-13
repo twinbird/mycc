@@ -17,6 +17,45 @@ void gen_lval(Node *node) {
   printf("  push rax\n");
 }
 
+// 関数呼び出し時のパラメータをレジスタへ設定する
+void set_function_params(Node *node) {
+  int i;
+  for (i = 0; node->params[i]; i++) {
+    switch (i) {
+    case 0:
+      gen(node->params[i]);
+      printf("  pop rax\n");
+      printf("  mov rdi, rax\n");
+      break;
+    case 1:
+      gen(node->params[i]);
+      printf("  pop rax\n");
+      printf("  mov rsi, rax\n");
+      break;
+    case 2:
+      gen(node->params[i]);
+      printf("  pop rax\n");
+      printf("  mov rdx, rax\n");
+      break;
+    case 3:
+      gen(node->params[i]);
+      printf("  pop rax\n");
+      printf("  mov rcx, rax\n");
+      break;
+    case 4:
+      gen(node->params[i]);
+      printf("  pop rax\n");
+      printf("  mov r8, rax\n");
+      break;
+    case 5:
+      gen(node->params[i]);
+      printf("  pop rax\n");
+      printf("  mov r9, rax\n");
+      break;
+    }
+  }
+}
+
 void gen(Node *node) {
   int else_start_label;
   int if_end_label;
@@ -113,6 +152,7 @@ void gen(Node *node) {
     }
     return;
   case ND_FCALL:
+    set_function_params(node);
     printf("  call %s\n", node->fname);
     printf("  push rax\n");
     return;

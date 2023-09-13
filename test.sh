@@ -94,6 +94,7 @@ assert 2 'main() { i = 0; if (1 < 0) { i = 1; return i; } else if (1 > 0) { i = 
 # function call
 assert 1 'main() { return foo();}'
 assert 2 'main() { return bar();}'
+assert 21 'main() { return multi(1, 2, 3, 4, 5, 6); }'
 
 # function definition
 assert 2 'ret2() { return 2; } main() { return ret2();}'
