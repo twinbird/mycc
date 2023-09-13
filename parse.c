@@ -353,6 +353,19 @@ Node *assign() {
 // expr = equality
 Node *expr() { return assign(); }
 
+// compound-stmt = "{" stmt* "}"
+Node *compound_stmt() {
+  if (consume("{")) {
+    Node *node = calloc(1, sizeof(Node));
+    node->kind = ND_BLOCK;
+    for (int i = 0; !consume("}"); i++) {
+      node->stmts[i] = stmt();
+    }
+    return node;
+  }
+  return NULL;
+}
+
 // stmt = expr ";"
 //      | "return" expr ";"
 //      | "if" "(" expr ")" stmt
@@ -413,12 +426,8 @@ Node *stmt() {
     return node;
   }
 
-  if (consume("{")) {
-    node = calloc(1, sizeof(Node));
-    node->kind = ND_BLOCK;
-    for (int i = 0; !consume("}"); i++) {
-      node->stmts[i] = stmt();
-    }
+  node = compound_stmt();
+  if (node) {
     return node;
   }
 
@@ -427,9 +436,27 @@ Node *stmt() {
   return node;
 }
 
+// function-definition = ident "(" ")" compound-stmt
+Node *function_definition() {
+  Token *tok = consume_ident();
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_FUNCTION;
+  strncpy(node->fname, tok->str, tok->len);
+
+  expect("(");
+  expect(")");
+
+  node->lhs = compound_stmt();
+  if (!node->lhs) {
+    error("関数のブロックが未指定です");
+  }
+
+  return node;
+}
+
 void program() {
   int i = 0;
   while (!at_eof())
-    code[i++] = stmt();
+    code[i++] = function_definition();
   code[i] = NULL;
 }

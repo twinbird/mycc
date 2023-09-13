@@ -116,6 +116,15 @@ void gen(Node *node) {
     printf("  call %s\n", node->fname);
     printf("  push rax\n");
     return;
+  case ND_FUNCTION:
+    printf("%s:\n", node->fname);
+    printf("  push rbp\n");
+    printf("  mov rbp, rsp\n");
+    // 変数の暫定確保用(8 * 26個)
+    printf("  sub rsp, 208\n");
+
+    gen(node->lhs);
+    return;
   }
 
   gen(node->lhs);

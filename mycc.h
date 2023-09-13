@@ -62,6 +62,7 @@ typedef enum {
   ND_FOR, // for
   ND_BLOCK, // { }のコードブロック
   ND_FCALL, // 関数呼び出し
+  ND_FUNCTION, // 関数定義
 } NodeKind;
 
 typedef struct Node Node;
@@ -76,9 +77,10 @@ struct Node {
   Node *stmts[100];   // ND_BLOCKの場合に利用
   int val;            // kindがND_NUMの場合のみ利用
   int offset;         // kindがND_LVARの場合のみ利用
-  char fname[100];    // kindがND_FCALLの場合関数名
+  char fname[100];    // kindがND_FCALLまたはND_FUNCTIONの場合関数名
 };
 Node *expr();
+Node *stmt();
 
 // =============================
 // コードジェネレータ
