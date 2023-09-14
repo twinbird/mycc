@@ -79,6 +79,7 @@ struct Node {
   int offset;         // kindがND_LVARの場合のみ利用
   char fname[100];    // kindがND_FCALLまたはND_FUNCTIONの場合関数名
   Node *params[6];    // 関数呼び出し時のパラメータ
+  Node *arguments[6]; // 関数定義の仮引数
 };
 Node *expr();
 Node *stmt();

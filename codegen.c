@@ -8,6 +8,7 @@
 // 分岐ラベルにつける数値
 int branch_label_counter;
 
+// 指定nodeのローカル変数へのアドレスをスタックに積む
 void gen_lval(Node *node) {
   if (node->kind != ND_LVAR)
     error("代入の左辺値が変数ではありません");
@@ -21,36 +22,56 @@ void gen_lval(Node *node) {
 void set_function_params(Node *node) {
   int i;
   for (i = 0; node->params[i]; i++) {
+    gen(node->params[i]);
+    printf("  pop rax\n");
     switch (i) {
     case 0:
-      gen(node->params[i]);
-      printf("  pop rax\n");
       printf("  mov rdi, rax\n");
       break;
     case 1:
-      gen(node->params[i]);
-      printf("  pop rax\n");
       printf("  mov rsi, rax\n");
       break;
     case 2:
-      gen(node->params[i]);
-      printf("  pop rax\n");
       printf("  mov rdx, rax\n");
       break;
     case 3:
-      gen(node->params[i]);
-      printf("  pop rax\n");
       printf("  mov rcx, rax\n");
       break;
     case 4:
-      gen(node->params[i]);
-      printf("  pop rax\n");
       printf("  mov r8, rax\n");
       break;
     case 5:
-      gen(node->params[i]);
-      printf("  pop rax\n");
       printf("  mov r9, rax\n");
+      break;
+    }
+  }
+}
+
+// 関数が呼び出された際の仮引数をスタックへ割り当てる
+void set_callee_arguments(Node *func_node) {
+  int i;
+  for (i = 0; i < 6 && func_node->arguments[i]; i++) {
+    gen_lval(func_node->arguments[i]);
+    printf("  pop rax\n");
+
+    switch (i) {
+    case 0:
+      printf("  mov [rax], rdi\n");
+      break;
+    case 1:
+      printf("  mov [rax], rsi\n");
+      break;
+    case 2:
+      printf("  mov [rax], rdx\n");
+      break;
+    case 3:
+      printf("  mov [rax], rcx\n");
+      break;
+    case 4:
+      printf("  mov [rax], r8\n");
+      break;
+    case 5:
+      printf("  mov [rax], r9\n");
       break;
     }
   }
@@ -162,6 +183,7 @@ void gen(Node *node) {
     printf("  mov rbp, rsp\n");
     // 変数の暫定確保用(8 * 26個)
     printf("  sub rsp, 208\n");
+    set_callee_arguments(node);
 
     gen(node->lhs);
     return;

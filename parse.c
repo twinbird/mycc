@@ -233,6 +233,19 @@ Node *new_node_num(int val) {
   return node;
 }
 
+// ローカル変数へ引数のトークンを加えてoffset値を返す
+int append_locals(Token *tok) {
+  LVar *lvar;
+  lvar = calloc(1, sizeof(LVar));
+  lvar->next = locals;
+  lvar->name = tok->str;
+  lvar->len = tok->len;
+  lvar->offset = locals == NULL ? 8 : locals->offset + 8;
+  locals = lvar;
+
+  return lvar->offset;
+}
+
 // primary = num
 //         | ident ("(" ((expr ",")* expr)? ")")?
 //         | "(" expr ")"
@@ -261,13 +274,7 @@ Node *primary() {
     if (lvar) {
       node->offset = lvar->offset;
     } else {
-      lvar = calloc(1, sizeof(LVar));
-      lvar->next = locals;
-      lvar->name = tok->str;
-      lvar->len = tok->len;
-      lvar->offset = locals == NULL ? 8 : locals->offset + 8;
-      node->offset = lvar->offset;
-      locals = lvar;
+      node->offset = append_locals(tok);
     }
 
     return node;
@@ -439,7 +446,7 @@ Node *stmt() {
   return node;
 }
 
-// function-definition = ident "(" ")" compound-stmt
+// function-definition = ident "(" ((ident ",")* ident)? ")" compound-stmt
 Node *function_definition() {
   Token *tok = consume_ident();
   Node *node = calloc(1, sizeof(Node));
@@ -447,7 +454,17 @@ Node *function_definition() {
   strncpy(node->fname, tok->str, tok->len);
 
   expect("(");
-  expect(")");
+
+  for (int i = 0; !consume(")"); i++) {
+    Token *arg_tok = consume_ident();
+    int offset = append_locals(arg_tok);
+    Node *arg_node = calloc(1, sizeof(Node));
+    arg_node->kind = ND_LVAR;
+    arg_node->offset = offset;
+    node->arguments[i] = arg_node;
+
+    consume(",");
+  }
 
   node->lhs = compound_stmt();
   if (!node->lhs) {

@@ -100,5 +100,7 @@ assert 21 'main() { return multi(1, 2, 3, 4, 5, 6); }'
 assert 2 'ret2() { return 2; } main() { return ret2();}'
 assert 4 'ret2() { return 2; } main() { return ret2() + ret2(); }'
 assert 6 'ret3() { one = 1; two = 2; return one + two; } main() { return ret3() + 3; }'
+assert 1 'ret(a) { return a; } main() { return ret(1);}'
+assert 28 'add(a, b, c, d, e, f) { g = 7; return a + b + c + d + e + f + g;} main() { return add(1,2,3,4,5,6); }'
 
 echo OK
