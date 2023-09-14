@@ -265,7 +265,7 @@ Node *primary() {
       lvar->next = locals;
       lvar->name = tok->str;
       lvar->len = tok->len;
-      lvar->offset = locals == NULL ? 0 : locals->offset + 8;
+      lvar->offset = locals == NULL ? 8 : locals->offset + 8;
       node->offset = lvar->offset;
       locals = lvar;
     }
