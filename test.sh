@@ -100,9 +100,9 @@ assert 21 'int main() { return multi(1, 2, 3, 4, 5, 6); }'
 assert 2 'int ret2() { return 2; } int main() { return ret2();}'
 assert 4 'int ret2() { return 2; } int main() { return ret2() + ret2(); }'
 assert 6 'int ret3() { int one; int two; one = 1; two = 2; return one + two; } int main() { return ret3() + 3; }'
-assert 1 'int ret(a) { return a; } int main() { return ret(1);}'
-assert 28 'int add(a, b, c, d, e, f) { int g; g = 7; return a + b + c + d + e + f + g;} int main() { return add(1,2,3,4,5,6); }'
-assert 120 'int factorial(n) { if (n == 0) { return 1; } return n * factorial(n-1); } int main() { return factorial(5); }'
+assert 1 'int ret(int a) { return a; } int main() { return ret(1);}'
+assert 28 'int add(int a, int b, int c, int d, int e, int f) { int g; g = 7; return a + b + c + d + e + f + g;} int main() { return add(1,2,3,4,5,6); }'
+assert 120 'int factorial(int n) { if (n == 0) { return 1; } return n * factorial(n-1); } int main() { return factorial(5); }'
 
 # reference & dereference
 assert 20 'int main() { int a; int ref; a = 20; ref = &a; return *ref;}'

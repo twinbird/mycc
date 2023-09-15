@@ -470,7 +470,7 @@ Node *stmt() {
   return node;
 }
 
-// function-definition = "int" ident "(" ((ident ",")* ident)? ")" compound-stmt
+// function-definition = "int" ident "(" (("int" ident ",")* "int" ident)? ")" compound-stmt
 Node *function_definition() {
   expect("int");
 
@@ -482,6 +482,8 @@ Node *function_definition() {
   expect("(");
 
   for (int i = 0; !consume(")"); i++) {
+    expect("int");
+
     Token *arg_tok = consume_ident();
     int offset = append_locals(arg_tok);
     Node *arg_node = calloc(1, sizeof(Node));
