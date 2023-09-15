@@ -65,6 +65,7 @@ typedef enum {
   ND_FUNCTION, // 関数定義
   ND_DEREF, // *(単項)
   ND_ADDR, // &(単項)
+  ND_VAR_DECLARE, // 変数宣言
 } NodeKind;
 
 typedef struct Node Node;

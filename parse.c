@@ -167,6 +167,12 @@ Token *tokenize(char *p) {
       continue;
     }
 
+    if (is_reserve_word(p, "int")) {
+      cur = new_token(TK_RESERVED, cur, p, strlen("int"));
+      p += strlen("int");
+      continue;
+    }
+
     if (is_ident_first_char(*p)) {
       int n = 0;
       char *q = p;
@@ -274,7 +280,6 @@ Node *primary() {
     if (lvar) {
       node->offset = lvar->offset;
     } else {
-      //node->offset = append_locals(tok);
       error_at(tok->str, "宣言されていない変数です");
     }
 
@@ -385,6 +390,7 @@ Node *compound_stmt() {
 }
 
 // stmt = expr ";"
+//      | "int" ident ";"
 //      | "return" expr ";"
 //      | "if" "(" expr ")" stmt
 //      | "while" "(" expr ")" stmt
@@ -392,6 +398,16 @@ Node *compound_stmt() {
 //      | "{" stmt* "}"
 Node *stmt() {
   Node *node;
+
+  if (consume("int")) {
+    Token *tok = consume_ident();
+    node->offset = append_locals(tok);
+    expect(";");
+
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_VAR_DECLARE;
+    return node;
+  }
 
   if (consume("return")) {
     node = calloc(1, sizeof(Node));
@@ -454,8 +470,10 @@ Node *stmt() {
   return node;
 }
 
-// function-definition = ident "(" ((ident ",")* ident)? ")" compound-stmt
+// function-definition = "int" ident "(" ((ident ",")* ident)? ")" compound-stmt
 Node *function_definition() {
+  expect("int");
+
   Token *tok = consume_ident();
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_FUNCTION;

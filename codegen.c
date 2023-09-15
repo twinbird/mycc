@@ -89,6 +89,8 @@ void gen(Node *node) {
   int loop_end_label;
 
   switch (node->kind) {
+  case ND_VAR_DECLARE:
+    return;
   case ND_NUM:
     comment_gen("ND_NUM");
     printf("  push %d\n", node->val);
