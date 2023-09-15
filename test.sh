@@ -104,4 +104,7 @@ assert 1 'ret(a) { return a; } main() { return ret(1);}'
 assert 28 'add(a, b, c, d, e, f) { g = 7; return a + b + c + d + e + f + g;} main() { return add(1,2,3,4,5,6); }'
 assert 120 'factorial(n) { if (n == 0) { return 1; } return n * factorial(n-1); } main() { return factorial(5); }'
 
+# reference & dereference
+assert 20 'main() { a = 20; ref = &a; return *ref;}'
+
 echo OK

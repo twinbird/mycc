@@ -8,6 +8,11 @@
 // 分岐ラベルにつける数値
 int branch_label_counter;
 
+// デバッグアセンブリを挿入
+void comment_gen(char *str) {
+  printf("#%s\n", str);
+}
+
 // 指定nodeのローカル変数へのアドレスをスタックに積む
 void gen_lval(Node *node) {
   if (node->kind != ND_LVAR)
@@ -85,15 +90,29 @@ void gen(Node *node) {
 
   switch (node->kind) {
   case ND_NUM:
+    comment_gen("ND_NUM");
     printf("  push %d\n", node->val);
     return;
   case ND_LVAR:
+    comment_gen("ND_LVAR");
     gen_lval(node);
     printf("  pop rax\n");
     printf("  mov rax, [rax]\n");
     printf("  push rax\n");
     return;
+  case ND_ADDR:
+    comment_gen("ND_ADDR");
+    gen_lval(node->lhs);
+    return;
+  case ND_DEREF:
+    comment_gen("ND_DEREF");
+    gen(node->lhs);
+    printf("  pop rax\n");
+    printf("  mov rax, [rax]\n");
+    printf("  push rax\n");
+    return;
   case ND_ASSIGN:
+    comment_gen("ND_ASSIGN");
     gen_lval(node->lhs);
     gen(node->rhs);
 
@@ -103,6 +122,7 @@ void gen(Node *node) {
     printf("  push rdi\n");
     return;
   case ND_RETURN:
+    comment_gen("ND_RETURN");
     gen(node->lhs);
     printf("  pop rax\n");
     printf("  mov rsp, rbp\n");
@@ -110,6 +130,7 @@ void gen(Node *node) {
     printf("  ret\n");
     return;
   case ND_IF:
+    comment_gen("ND_IF");
     else_start_label = branch_label_counter++;
     if_end_label = branch_label_counter++;
 
@@ -133,6 +154,7 @@ void gen(Node *node) {
     printf(".LifEnd%d:\n", if_end_label);
     return;
   case ND_WHILE:
+    comment_gen("ND_WHILE");
     loop_start_label = branch_label_counter++;
     loop_end_label = branch_label_counter++;
 
@@ -146,6 +168,7 @@ void gen(Node *node) {
     printf(".LloopEnd%d:\n", loop_end_label);
     return;
   case ND_FOR:
+    comment_gen("ND_FOR");
     loop_start_label = branch_label_counter++;
     loop_end_label = branch_label_counter++;
 
@@ -167,17 +190,20 @@ void gen(Node *node) {
     printf(".LloopEnd%d:\n", loop_end_label);
     return;
   case ND_BLOCK:
+    comment_gen("ND_BLOCK");
     for (int i = 0; node->stmts[i]; i++) {
       gen(node->stmts[i]);
       printf("  pop rax\n");
     }
     return;
   case ND_FCALL:
+    comment_gen("ND_FCALL");
     set_function_params(node);
     printf("  call %s\n", node->fname);
     printf("  push rax\n");
     return;
   case ND_FUNCTION:
+    comment_gen("ND_FUNCTION");
     printf("%s:\n", node->fname);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
