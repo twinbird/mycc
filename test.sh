@@ -106,5 +106,6 @@ assert 120 'int factorial(int n) { if (n == 0) { return 1; } return n * factoria
 
 # reference & dereference
 assert 20 'int main() { int a; int ref; a = 20; ref = &a; return *ref;}'
+assert 4 'int main() { int x; int *y; x = 1; y = &x; *y = 4; return x; }'
 
 echo OK

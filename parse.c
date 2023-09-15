@@ -240,13 +240,14 @@ Node *new_node_num(int val) {
 }
 
 // ローカル変数へ引数のトークンを加えてoffset値を返す
-int append_locals(Token *tok) {
+int append_locals(Token *tok, Type *ty) {
   LVar *lvar;
   lvar = calloc(1, sizeof(LVar));
   lvar->next = locals;
   lvar->name = tok->str;
   lvar->len = tok->len;
   lvar->offset = locals == NULL ? 8 : locals->offset + 8;
+  lvar->ty = ty;
   locals = lvar;
 
   return lvar->offset;
@@ -279,6 +280,7 @@ Node *primary() {
     LVar *lvar = find_lvar(tok);
     if (lvar) {
       node->offset = lvar->offset;
+      node->ty = lvar->ty;
     } else {
       error_at(tok->str, "宣言されていない変数です");
     }
@@ -389,8 +391,24 @@ Node *compound_stmt() {
   return NULL;
 }
 
+// type_declare = "int" "*"*
+Type *type_declare() {
+  if (!consume("int")) {
+    return NULL;
+  }
+  Type *ty = calloc(1, sizeof(Type));
+  ty->ty = P_INT;
+  while (consume("*")) {
+    Type *t = calloc(1, sizeof(Type));
+    t->ty = P_PTR;
+    t->ptr_to = ty;
+    ty = t;
+  }
+  return ty;
+}
+
 // stmt = expr ";"
-//      | "int" ident ";"
+//      | "int" "*"* ident ";"
 //      | "return" expr ";"
 //      | "if" "(" expr ")" stmt
 //      | "while" "(" expr ")" stmt
@@ -399,9 +417,11 @@ Node *compound_stmt() {
 Node *stmt() {
   Node *node;
 
-  if (consume("int")) {
+  Type *ty = type_declare();
+  if (ty) {
     Token *tok = consume_ident();
-    node->offset = append_locals(tok);
+    node->offset = append_locals(tok, ty);
+    node->ty = ty;
     expect(";");
 
     node = calloc(1, sizeof(Node));
@@ -482,10 +502,13 @@ Node *function_definition() {
   expect("(");
 
   for (int i = 0; !consume(")"); i++) {
-    expect("int");
+    Type *ty = type_declare();
+    if (!ty) {
+      error("引数の型が未指定です");
+    }
 
     Token *arg_tok = consume_ident();
-    int offset = append_locals(arg_tok);
+    int offset = append_locals(arg_tok, ty);
     Node *arg_node = calloc(1, sizeof(Node));
     arg_node->kind = ND_LVAR;
     arg_node->offset = offset;

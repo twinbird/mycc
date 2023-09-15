@@ -30,6 +30,19 @@ extern Token *token;
 
 Token *tokenize(char *p);
 
+// プリミティブ型
+enum PType {
+  P_INT,  // int
+  P_PTR,  // ポインタ
+};
+
+// 変数の型
+typedef struct Type Type;
+struct Type {
+  enum PType ty;         // プリミティブ型
+  struct Type *ptr_to;   // PTRの場合示す先の型
+};
+
 // ローカル変数
 typedef struct LVar LVar;
 struct LVar {
@@ -37,6 +50,7 @@ struct LVar {
   char *name;  // 変数の名前
   int len;     // 名前の長さ
   int offset;  // RBPからのオフセット
+  Type *ty;    // 型
 };
 // ローカル変数のリスト
 extern LVar *locals;
@@ -80,6 +94,7 @@ struct Node {
   Node *stmts[100];   // ND_BLOCKの場合に利用
   int val;            // kindがND_NUMの場合のみ利用
   int offset;         // kindがND_LVARの場合のみ利用
+  Type *ty;           // kindがND_LVARの場合のみ利用
   char fname[100];    // kindがND_FCALLまたはND_FUNCTIONの場合関数名
   Node *params[6];    // 関数呼び出し時のパラメータ
   Node *arguments[6]; // 関数定義の仮引数
