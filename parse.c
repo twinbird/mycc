@@ -274,7 +274,8 @@ Node *primary() {
     if (lvar) {
       node->offset = lvar->offset;
     } else {
-      node->offset = append_locals(tok);
+      //node->offset = append_locals(tok);
+      error_at(tok->str, "宣言されていない変数です");
     }
 
     return node;
