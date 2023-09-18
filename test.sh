@@ -105,7 +105,13 @@ assert 28 'int add(int a, int b, int c, int d, int e, int f) { int g; g = 7; ret
 assert 120 'int factorial(int n) { if (n == 0) { return 1; } return n * factorial(n-1); } int main() { return factorial(5); }'
 
 # reference & dereference
-assert 20 'int main() { int a; int ref; a = 20; ref = &a; return *ref;}'
+assert 20 'int main() { int a; int *ref; a = 20; ref = &a; return *ref;}'
 assert 4 'int main() { int x; int *y; x = 1; y = &x; *y = 4; return x; }'
+
+# sizeof
+assert 4 'int main() { return sizeof(1);}'
+assert 4 'int main() { int x; x = 10; return sizeof(x + 3); }'
+assert 8 'int main() { int *p; return sizeof(p); }'
+assert 4 'int main() { int *p; return sizeof(*p); }'
 
 echo OK

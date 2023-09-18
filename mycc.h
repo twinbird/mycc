@@ -43,6 +43,9 @@ struct Type {
   struct Type *ptr_to;   // PTRの場合示す先の型
 };
 
+// int型を返す
+Type *type_int();
+
 // ローカル変数
 typedef struct LVar LVar;
 struct LVar {
