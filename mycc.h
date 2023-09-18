@@ -1,9 +1,12 @@
+#include <stdbool.h>
+
 // ====================
 // エラー表示
 // ====================
 // 入力プログラム
 extern char *user_input;
 void error(char *fmt, ...);
+void error_at(char *loc, char *fmt, ...);
 
 // ====================
 // トークナイザ
@@ -29,7 +32,16 @@ struct Token {
 extern Token *token;
 
 Token *tokenize(char *p);
+bool consume(char *op);
+Token *consume_ident();
+void expect(char *op);
+int expect_number();
+bool at_eof();
 
+
+// ====================
+// 型
+// ====================
 // プリミティブ型
 enum PType {
   P_INT,  // int
@@ -46,7 +58,9 @@ struct Type {
 // int型を返す
 Type *type_int();
 
+// ====================
 // ローカル変数
+// ====================
 typedef struct LVar LVar;
 struct LVar {
   LVar *next;  // 次の変数かNULL
