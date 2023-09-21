@@ -139,15 +139,33 @@ Node *mul() {
 // add = mul ("+" mul | "-" mul)*
 Node *add() {
   Node *node = mul();
-  attach_type(node);
 
   for (;;) {
-    if (consume("+"))
-      node = new_node(ND_ADD, node, mul());
-    else if (consume("-"))
-      node = new_node(ND_SUB, node, mul());
-    else
+    attach_type(node);
+
+    if (consume("+")) {
+      if (node->ty->ty == P_PTR) {
+        // ポインタ演算
+        Node *n = new_node_num(size_of(node->ty->ptr_to));
+        Node *m = new_node(ND_MUL, n, mul());
+        node = new_node(ND_ADD, node, m);
+      } else {
+        // 通常の演算
+        node = new_node(ND_ADD, node, mul());
+      }
+    } else if (consume("-")) {
+      if (node->ty->ty == P_PTR) {
+        // ポインタ演算
+        Node *n = new_node_num(size_of(node->ty->ptr_to));
+        Node *m = new_node(ND_MUL, n, mul());
+        node = new_node(ND_SUB, node, m);
+      } else {
+        // 通常の演算
+        node = new_node(ND_SUB, node, mul());
+      }
+    } else {
       return node;
+    }
   }
 }
 
