@@ -90,6 +90,10 @@ void gen(Node *node) {
 
   switch (node->kind) {
   case ND_VAR_DECLARE:
+    comment_gen("ND_VAR_DECLARE");
+    // 文を実行するごとにpop raxしているので
+    // スタックの調整のために追加
+    printf("  push 0\n");
     return;
   case ND_NUM:
     comment_gen("ND_NUM");

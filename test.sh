@@ -18,6 +18,15 @@ assert() {
   fi
 }
 
+out() {
+  input="$1"
+
+  cc -c test.c -o test.o
+  ./mycc "$input" > tmp.s
+  cc -o tmp tmp.s test.o
+  ./tmp
+}
+
 assert 0 'int main() { return 0;}'
 assert 42 'int main() { return 42;}'
 assert 21 'int main() { return 5+20-4;}'
@@ -95,6 +104,7 @@ assert 2 'int main() { int i; i = 0; if (1 < 0) { i = 1; return i; } else if (1 
 assert 1 'int main() { return foo();}'
 assert 2 'int main() { return bar();}'
 assert 21 'int main() { return multi(1, 2, 3, 4, 5, 6); }'
+assert 21 'int main() { int i; return multi(1, 2, 3, 4, 5, 6); }'
 
 # function definition
 assert 2 'int ret2() { return 2; } int main() { return ret2();}'
