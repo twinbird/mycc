@@ -57,6 +57,8 @@ struct Type {
 
 // int型を返す
 Type *type_int();
+// 引数の型のサイズを返す
+int size_of(Type *ty);
 
 // ====================
 // ローカル変数
@@ -118,6 +120,9 @@ struct Node {
 };
 Node *expr();
 Node *stmt();
+
+// 引数のノードへ型を加える
+Type *attach_type(Node *node);
 
 // =============================
 // コードジェネレータ

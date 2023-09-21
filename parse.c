@@ -117,7 +117,7 @@ Node *unary() {
   if (consume("sizeof")) {
     Node *n = unary();
     attach_type(n);
-    return new_node_num(size_of(n));
+    return new_node_num(size_of(n->ty));
   }
   return primary();
 }

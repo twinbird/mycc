@@ -51,11 +51,11 @@ Type *attach_type(Node *node) {
 }
 
 // 引数のノードの型のサイズを返す
-int size_of(Node *node) {
-  if (node->ty->ty == P_PTR) {
+int size_of(Type *ty) {
+  if (ty->ty == P_PTR) {
     return 8;
   }
-  if (node->ty->ty == P_INT) {
+  if (ty->ty == P_INT) {
     return 4;
   }
   error("サポートしていない型です");

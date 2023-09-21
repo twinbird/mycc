@@ -114,4 +114,8 @@ assert 4 'int main() { int x; x = 10; return sizeof(x + 3); }'
 assert 8 'int main() { int *p; return sizeof(p); }'
 assert 4 'int main() { int *p; return sizeof(*p); }'
 
+# pointer calculation
+#assert 3 'int main() { int *p; alloc4(&p, 1,2,3,4); int *q; q = p + 2; return *q; }'
+#assert 2 'int main() { int *p; alloc4(&p, 1,2,3,4); int *q; q = p + 2; q = q - 1; return *q; }'
+
 echo OK
