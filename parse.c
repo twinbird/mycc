@@ -253,6 +253,11 @@ Node *stmt() {
   Type *ty = type_declare();
   if (ty) {
     Token *tok = consume_ident();
+    if (consume("[")) {
+      int n = expect_number();
+      ty = array_of(ty, n);
+      expect("]");
+    }
     node->var = append_locals(tok, ty);
     node->ty = ty;
     expect(";");

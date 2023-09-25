@@ -128,4 +128,7 @@ assert 8 'int main() { int *p; return sizeof(*p); }'
 assert 3 'int main() { int *p; alloc4(&p, 1,2,3,4); int *q; q = p + 2; return *q; }'
 assert 2 'int main() { int *p; alloc4(&p, 1,2,3,4); int *q; q = p + 2; q = q - 1; return *q; }'
 
+# array
+assert 80 'int main() { int a[10]; return 80;}'
+
 echo OK

@@ -44,8 +44,9 @@ bool at_eof();
 // ====================
 // プリミティブ型
 enum PType {
-  P_INT,  // int
-  P_PTR,  // ポインタ
+  P_INT,   // int
+  P_PTR,   // ポインタ
+  P_ARRAY, // 配列
 };
 
 // 変数の型
@@ -53,12 +54,15 @@ typedef struct Type Type;
 struct Type {
   enum PType ty;         // プリミティブ型
   struct Type *ptr_to;   // PTRの場合示す先の型
+  int size;              // 配列のサイズ
 };
 
 // int型を返す
 Type *type_int();
 // 引数の型のサイズを返す
 int size_of(Type *ty);
+// 指定型を示す配列型を返す
+Type *array_of(Type *to, int size);
 
 // ====================
 // ローカル変数

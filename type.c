@@ -12,6 +12,14 @@ Type *type_int() {
   return ty;
 }
 
+// 指定型を示す配列型を返す
+Type *array_of(Type *to, int size) {
+  Type *ty = calloc(1, sizeof(Type));
+  ty->ty = P_ARRAY;
+  ty->size = size;
+  ty->ptr_to = to;
+}
+
 // 指定型を示すポインタ型を返す
 Type *pointer_to(Type *to) {
   Type *ty = calloc(1, sizeof(Type));
@@ -57,6 +65,9 @@ int size_of(Type *ty) {
   }
   if (ty->ty == P_INT) {
     return 8;
+  }
+  if (ty->ty == P_ARRAY) {
+    return ty->size * size_of(ty->ptr_to);
   }
   error("サポートしていない型です");
 }
