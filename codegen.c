@@ -96,12 +96,12 @@ int align_to(int n, int align) {
 void assign_stack_offset(Node *node) {
   int total = 0;
   for (LVar *var = node->locals; var; var = var->next) {
-    var->offset = total + 8;
-    total += 8;
+    var->offset = total + size_of(var->ty);
+    total += size_of(var->ty);
   }
   // ABIの制約でcallする時にはスタックの境界値を16バイトに
   // する必要があるため16バイトでアライメントする
-  node->stack_size = align_to(8*26, 16);
+  node->stack_size = align_to(total, 16);
 }
 
 void gen(Node *node) {

@@ -5,13 +5,13 @@ int foo() { return 1; }
 
 int bar() { return 2; }
 
-int multi(int a, int b, int c, int d, int e, int f) {
-  printf("%d, %d, %d, %d, %d, %d\n", a, b, c, d, e, f);
+int multi(long a, long b, long c, long d, long e, long f) {
+  printf("%ld, %ld, %ld, %ld, %ld, %ld\n", a, b, c, d, e, f);
   return a + b + c + d + e + f;
 }
 
-void alloc4(int **p, int a, int b, int c, int d) {
-  int *ip = (int *)malloc(sizeof(int) * 4);
+void alloc4(long **p, long a, long b, long c, long d) {
+  long *ip = (long *)malloc(sizeof(long) * 4);
   ip[0] = a;
   ip[1] = b;
   ip[2] = c;

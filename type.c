@@ -56,7 +56,7 @@ int size_of(Type *ty) {
     return 8;
   }
   if (ty->ty == P_INT) {
-    return 4;
+    return 8;
   }
   error("サポートしていない型です");
 }
