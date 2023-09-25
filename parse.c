@@ -48,18 +48,17 @@ Node *new_node_num(int val) {
   return node;
 }
 
-// ローカル変数へ引数のトークンを加えてoffset値を返す
-int append_locals(Token *tok, Type *ty) {
+// ローカル変数へ引数のトークンを加える
+LVar *append_locals(Token *tok, Type *ty) {
   LVar *lvar;
   lvar = calloc(1, sizeof(LVar));
   lvar->next = locals;
   lvar->name = tok->str;
   lvar->len = tok->len;
-  lvar->offset = locals == NULL ? 8 : locals->offset + 8;
   lvar->ty = ty;
   locals = lvar;
 
-  return lvar->offset;
+  return lvar;
 }
 
 // primary = num
@@ -88,8 +87,8 @@ Node *primary() {
 
     LVar *lvar = find_lvar(tok);
     if (lvar) {
-      node->offset = lvar->offset;
       node->ty = lvar->ty;
+      node->var = lvar;
     } else {
       error_at(tok->str, "宣言されていない変数です");
     }
@@ -254,7 +253,7 @@ Node *stmt() {
   Type *ty = type_declare();
   if (ty) {
     Token *tok = consume_ident();
-    node->offset = append_locals(tok, ty);
+    node->var = append_locals(tok, ty);
     node->ty = ty;
     expect(";");
 
@@ -328,6 +327,8 @@ Node *stmt() {
 Node *function_definition() {
   expect("int");
 
+  locals = NULL;
+
   Token *tok = consume_ident();
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_FUNCTION;
@@ -342,10 +343,9 @@ Node *function_definition() {
     }
 
     Token *arg_tok = consume_ident();
-    int offset = append_locals(arg_tok, ty);
     Node *arg_node = calloc(1, sizeof(Node));
     arg_node->kind = ND_LVAR;
-    arg_node->offset = offset;
+    arg_node->var = append_locals(arg_tok, ty);
     node->arguments[i] = arg_node;
 
     consume(",");
@@ -355,6 +355,8 @@ Node *function_definition() {
   if (!node->lhs) {
     error("関数のブロックが未指定です");
   }
+
+  node->locals = locals;
 
   return node;
 }

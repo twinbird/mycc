@@ -113,10 +113,13 @@ struct Node {
   Node *stmts[100];   // ND_BLOCKの場合に利用
   int val;            // kindがND_NUMの場合のみ利用
   int offset;         // kindがND_LVARの場合のみ利用
-  Type *ty;           // kindがND_LVARの場合のみ利用
+  Type *ty;           // ノードの型
   char fname[100];    // kindがND_FCALLまたはND_FUNCTIONの場合関数名
   Node *params[6];    // 関数呼び出し時のパラメータ
   Node *arguments[6]; // 関数定義の仮引数
+  LVar *var;          // kindがND_LVARの場合のローカル変数
+  LVar *locals;       // 関数定義で使うローカル変数のリスト
+  int stack_size;     // 関数定義で使うローカル変数のスタックサイズ
 };
 Node *expr();
 Node *stmt();

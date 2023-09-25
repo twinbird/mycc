@@ -15,11 +15,15 @@ void comment_gen(char *str) {
 
 // 指定nodeのローカル変数へのアドレスをスタックに積む
 void gen_lval(Node *node) {
-  if (node->kind != ND_LVAR)
+  if (node->kind != ND_LVAR) {
     error("代入の左辺値が変数ではありません");
+  }
+  if (!node->var) {
+    error("varが設定されていないgen_lval");
+  }
 
   printf("  mov rax, rbp\n");
-  printf("  sub rax, %d\n", node->offset);
+  printf("  sub rax, %d\n", node->var->offset);
   printf("  push rax\n");
 }
 
@@ -80,6 +84,24 @@ void set_callee_arguments(Node *func_node) {
       break;
     }
   }
+}
+
+// nをalignの倍数になるように切り上げる
+// 例: align_to(24, 16) => 32
+int align_to(int n, int align) {
+  return (n + align - 1) / align * align;
+}
+
+// 関数定義で使うローカル変数のオフセット値とスタックサイズを設定する
+void assign_stack_offset(Node *node) {
+  int total = 0;
+  for (LVar *var = node->locals; var; var = var->next) {
+    var->offset = total + 8;
+    total += 8;
+  }
+  // ABIの制約でcallする時にはスタックの境界値を16バイトに
+  // する必要があるため16バイトでアライメントする
+  node->stack_size = align_to(8*26, 16);
 }
 
 void gen(Node *node) {
@@ -214,11 +236,12 @@ void gen(Node *node) {
     return;
   case ND_FUNCTION:
     comment_gen("ND_FUNCTION");
+    assign_stack_offset(node);
+
     printf("%s:\n", node->fname);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    // 変数の暫定確保用(8 * 26個)
-    printf("  sub rsp, 208\n");
+    printf("  sub rsp, %d\n", node->stack_size);
     set_callee_arguments(node);
 
     gen(node->lhs);
