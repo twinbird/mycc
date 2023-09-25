@@ -130,5 +130,6 @@ assert 2 'int main() { int *p; alloc4(&p, 1,2,3,4); int *q; q = p + 2; q = q - 1
 
 # array
 assert 80 'int main() { int a[10]; return 80;}'
+assert 3 'int main() { int a[2]; *a = 1; *(a+1)=2; int *p; p=a; return *p+*(p+1); }'
 
 echo OK

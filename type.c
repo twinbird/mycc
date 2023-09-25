@@ -5,6 +5,16 @@
 // 型
 // =======================
 
+// 配列なら1
+bool is_array(Type *t) {
+  return t->ty == P_ARRAY;
+}
+
+// ポインタ型なら1
+bool is_pointer(Type *t) {
+  return t->ty == P_PTR;
+}
+
 // int型を返す
 Type *type_int() {
   Type *ty = calloc(1, sizeof(Type));

@@ -124,9 +124,13 @@ void gen(Node *node) {
   case ND_LVAR:
     comment_gen("ND_LVAR");
     gen_lval(node);
-    printf("  pop rax\n");
-    printf("  mov rax, [rax]\n");
-    printf("  push rax\n");
+    if (is_array(node->var->ty)) {
+      // 先頭にそのままアドレスを積んでおく
+    } else {
+      printf("  pop rax\n");
+      printf("  mov rax, [rax]\n");
+      printf("  push rax\n");
+    }
     return;
   case ND_ADDR:
     comment_gen("ND_ADDR");

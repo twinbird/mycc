@@ -143,7 +143,7 @@ Node *add() {
     attach_type(node);
 
     if (consume("+")) {
-      if (node->ty->ty == P_PTR) {
+      if (is_pointer(node->ty) || is_array(node->ty)) {
         // ポインタ演算
         Node *n = new_node_num(size_of(node->ty->ptr_to));
         Node *m = new_node(ND_MUL, n, mul());
@@ -153,7 +153,7 @@ Node *add() {
         node = new_node(ND_ADD, node, mul());
       }
     } else if (consume("-")) {
-      if (node->ty->ty == P_PTR) {
+      if (is_pointer(node->ty) || is_array(node->ty)) {
         // ポインタ演算
         Node *n = new_node_num(size_of(node->ty->ptr_to));
         Node *m = new_node(ND_MUL, n, mul());

@@ -63,6 +63,10 @@ Type *type_int();
 int size_of(Type *ty);
 // 指定型を示す配列型を返す
 Type *array_of(Type *to, int size);
+// 配列なら1
+bool is_array(Type *t);
+// ポインタ型なら1
+bool is_pointer(Type *t);
 
 // ====================
 // ローカル変数
