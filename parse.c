@@ -64,13 +64,16 @@ LVar *append_locals(Token *tok, Type *ty) {
 // primary = num
 //         | ident ("(" ((expr ",")* expr)? ")")?
 //         | "(" expr ")"
+//         | ident
 Node *primary() {
+  // グルーピングのかっこ
   if (consume("(")) {
     Node *node = expr();
     expect(")");
     return node;
   }
 
+  // 関数呼び出し
   Token *tok = consume_ident();
   if (tok && consume("(")) {
     Node *node = calloc(1, sizeof(Node));
@@ -81,7 +84,10 @@ Node *primary() {
       consume(",");
     }
     return node;
-  } else if (tok) {
+  }
+
+  // 変数
+  if (tok) {
     Node *node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
 
@@ -96,19 +102,35 @@ Node *primary() {
     return node;
   }
 
+  // 数値
   return new_node_num(expect_number());
 }
 
-// unary = "+"? primary
-//       | "-"? primary
+// postfix = primary ("[" expr "]")*
+Node *postfix() {
+  Node *n = primary();
+  if (consume("[")) {
+    Node *e = expr();
+    expect("]");
+    n = new_node(
+          ND_DEREF, 
+          new_node(ND_ADD, n, e),
+          NULL
+        );
+  }
+  return n;
+}
+
+// unary = "+"? postfix
+//       | "-"? postfix
 //       | "*" unary
 //       | "&" unary
 //       | "sizeof" unary
 Node *unary() {
   if (consume("+"))
-    return primary();
+    return postfix();
   if (consume("-"))
-    return new_node(ND_SUB, new_node_num(0), primary());
+    return new_node(ND_SUB, new_node_num(0), postfix());
   if (consume("*"))
     return new_node(ND_DEREF, unary(), NULL);
   if (consume("&"))
@@ -118,7 +140,7 @@ Node *unary() {
     attach_type(n);
     return new_node_num(size_of(n->ty));
   }
-  return primary();
+  return postfix();
 }
 
 // mul = unary ("*" unary | "/" unary)*
