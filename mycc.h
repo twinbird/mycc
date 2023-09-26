@@ -81,6 +81,23 @@ struct LVar {
 };
 // ローカル変数のリスト
 extern LVar *locals;
+LVar *find_lvar(Token *tok);
+LVar *append_locals(Token *tok, Type *ty);
+
+// ====================
+// グローバル変数
+// ====================
+typedef struct GVar GVar;
+struct GVar {
+  GVar *next;  // 次の変数かNULL
+  char *name;  // 変数の名前
+  int len;     // 名前の長さ
+  Type *ty;    // 型
+};
+// グローバル変数のリスト
+extern GVar *globals;
+GVar *find_gvar(Token *tok);
+GVar *append_globals(Token *tok, Type *ty);
 
 // =======================
 // 抽象構文木

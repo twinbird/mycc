@@ -4,28 +4,6 @@
 #include "mycc.h"
 
 // =======================
-// ローカル変数
-// =======================
-// ローカル変数のリスト先頭へのポインタ
-LVar *locals;
-
-// ローカル変数を探す
-LVar *find_lvar(Token *tok) {
-  for (LVar *var = locals; var; var = var->next)
-    if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
-      return var;
-  return NULL;
-}
-
-void debug_print_lvar() {
-  fprintf(stderr, "---------------------------\n");
-  fprintf(stderr, "DEBUG\n");
-  for (LVar *var = locals; var; var = var->next)
-    fprintf(stderr, "%.*s\n", var->len, var->name);
-  fprintf(stderr, "---------------------------\n");
-}
-
-// =======================
 // 抽象構文木
 // =======================
 
@@ -46,19 +24,6 @@ Node *new_node_num(int val) {
   node->val = val;
   node->ty = type_int();
   return node;
-}
-
-// ローカル変数へ引数のトークンを加える
-LVar *append_locals(Token *tok, Type *ty) {
-  LVar *lvar;
-  lvar = calloc(1, sizeof(LVar));
-  lvar->next = locals;
-  lvar->name = tok->str;
-  lvar->len = tok->len;
-  lvar->ty = ty;
-  locals = lvar;
-
-  return lvar;
 }
 
 // primary = num
