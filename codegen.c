@@ -1,5 +1,7 @@
+#define _XOPEN_SOURCE 700
 #include "mycc.h"
 #include <stdio.h>
+#include <string.h>
 
 // =============================
 // コードジェネレータ
@@ -25,6 +27,15 @@ void gen_lval(Node *node) {
   printf("  mov rax, rbp\n");
   printf("  sub rax, %d\n", node->var->offset);
   printf("  push rax\n");
+}
+
+// グローバル変数の領域を出力する
+void gen_global() {
+  for (GVar *var = globals; var; var = var->next) {
+    char *name = strndup(var->name, var->len);
+    printf("%s:\n", name);
+    printf("  .zero %d\n", size_of(var->ty));
+  }
 }
 
 // 関数呼び出し時のパラメータをレジスタへ設定する
@@ -295,4 +306,17 @@ void gen(Node *node) {
   }
 
   printf("  push rax\n");
+}
+
+void codegen() {
+  printf(".intel_syntax noprefix\n");
+  printf(".global main\n");
+
+  gen_global();
+
+  for (int i = 0; code[i]; i++) {
+    gen(code[i]);
+    // 式の評価結果をraxへ設定しておく
+    printf("  pop rax\n");
+  }
 }

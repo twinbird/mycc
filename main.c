@@ -10,15 +10,7 @@ int main(int argc, char **argv) {
   user_input = argv[1];
   token = tokenize(argv[1]);
   program();
-
-  printf(".intel_syntax noprefix\n");
-  printf(".global main\n");
-
-  for (int i = 0; code[i]; i++) {
-    gen(code[i]);
-    // 式の評価結果をraxへ設定しておく
-    printf("  pop rax\n");
-  }
+  codegen();
 
   return 0;
 }

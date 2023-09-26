@@ -152,11 +152,14 @@ Node *stmt();
 // 引数のノードへ型を加える
 Type *attach_type(Node *node);
 
+// トップレベルのパース
+void program();
+
 // =============================
 // コードジェネレータ
 // =============================
 void gen(Node *node);
-void program();
+void codegen();
 
 // パース結果のノード
 extern Node *code[100];
