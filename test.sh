@@ -134,4 +134,7 @@ assert 3 'int main() { int a[2]; *a = 1; *(a+1)=2; int *p; p=a; return *p+*(p+1)
 assert 30 'int main() { int a[5]; a[0]=0; a[1]=10; a[2]=20; a[3]=30; a[4]=40; return a[3];}'
 assert 40 'int main() { int a[5]; a[0]=0; a[1]=10; a[2]=20; a[3]=30; a[4]=40; return 4[a];}'
 
+# global variable
+assert 1 'int global_int; int *global_ptr; int global_ary[10]; int main() { int a; a=1; return a; }'
+
 echo OK

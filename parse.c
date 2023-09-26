@@ -212,7 +212,7 @@ Node *compound_stmt() {
 }
 
 // type_declare = "int" "*"*
-Type *type_declare() {
+Type *type_specifier() {
   if (!consume("int")) {
     return NULL;
   }
@@ -227,6 +227,16 @@ Type *type_declare() {
   return ty;
 }
 
+// array_specifier = ("[" num "]")?
+Type *array_specifier(Type *base) {
+  if (consume("[")) {
+    int n = expect_number();
+    base = array_of(base, n);
+    expect("]");
+  }
+  return base;
+}
+
 // stmt = expr ";"
 //      | "int" "*"* ident ";"
 //      | "return" expr ";"
@@ -237,14 +247,10 @@ Type *type_declare() {
 Node *stmt() {
   Node *node;
 
-  Type *ty = type_declare();
+  Type *ty = type_specifier();
   if (ty) {
     Token *tok = consume_ident();
-    if (consume("[")) {
-      int n = expect_number();
-      ty = array_of(ty, n);
-      expect("]");
-    }
+    ty = array_specifier(ty);
     node->var = append_locals(tok, ty);
     node->ty = ty;
     expect(";");
@@ -316,20 +322,15 @@ Node *stmt() {
 }
 
 // function-definition = "int" ident "(" (("int" ident ",")* "int" ident)? ")" compound-stmt
-Node *function_definition() {
-  expect("int");
-
+Node *function_definition(Token *fname_tok) {
   locals = NULL;
 
-  Token *tok = consume_ident();
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_FUNCTION;
-  strncpy(node->fname, tok->str, tok->len);
-
-  expect("(");
+  strncpy(node->fname, fname_tok->str, fname_tok->len);
 
   for (int i = 0; !consume(")"); i++) {
-    Type *ty = type_declare();
+    Type *ty = type_specifier();
     if (!ty) {
       error("引数の型が未指定です");
     }
@@ -355,7 +356,20 @@ Node *function_definition() {
 
 void program() {
   int i = 0;
-  while (!at_eof())
-    code[i++] = function_definition();
+  while (!at_eof()) {
+    Type *ty = type_specifier();
+    Token *tok = consume_ident();
+    if (!ty) {
+      error("関数かグローバル変数の型定義が未指定です");
+    }
+    if (consume("(")) {
+      code[i++] = function_definition(tok);
+    } else {
+      // グローバル変数の処理
+      ty = array_specifier(ty);
+      append_globals(tok, ty);
+      expect(";");
+    }
+  }
   code[i] = NULL;
 }
