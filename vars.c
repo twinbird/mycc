@@ -1,6 +1,6 @@
+#include "mycc.h"
 #include <stdlib.h>
 #include <string.h>
-#include "mycc.h"
 
 // =======================
 // ローカル変数
@@ -54,4 +54,3 @@ GVar *append_globals(Token *tok, Type *ty) {
 
   return gvar;
 }
-

@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
 #include "mycc.h"
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // ====================
 // トークナイザ
@@ -170,5 +170,3 @@ Token *tokenize(char *p) {
   new_token(TK_EOF, cur, p, 0);
   return head.next;
 }
-
-

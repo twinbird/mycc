@@ -11,9 +11,7 @@
 int branch_label_counter;
 
 // デバッグアセンブリを挿入
-void comment_gen(char *str) {
-  printf("#%s\n", str);
-}
+void comment_gen(char *str) { printf("#%s\n", str); }
 
 // 指定nodeの変数へのアドレスをスタックに積む
 void gen_var_addr(Node *node) {
@@ -98,9 +96,7 @@ void set_callee_arguments(Node *func_node) {
 
 // nをalignの倍数になるように切り上げる
 // 例: align_to(24, 16) => 32
-int align_to(int n, int align) {
-  return (n + align - 1) / align * align;
-}
+int align_to(int n, int align) { return (n + align - 1) / align * align; }
 
 // 関数定義で使うローカル変数のオフセット値とスタックサイズを設定する
 void assign_stack_offset(Node *node) {

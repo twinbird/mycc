@@ -1,19 +1,15 @@
-#include <stdlib.h>
 #include "mycc.h"
+#include <stdlib.h>
 
 // =======================
 // 型
 // =======================
 
 // 配列なら1
-bool is_array(Type *t) {
-  return t->ty == P_ARRAY;
-}
+bool is_array(Type *t) { return t->ty == P_ARRAY; }
 
 // ポインタ型なら1
-bool is_pointer(Type *t) {
-  return t->ty == P_PTR;
-}
+bool is_pointer(Type *t) { return t->ty == P_PTR; }
 
 // int型を返す
 Type *type_int() {
@@ -81,5 +77,3 @@ int size_of(Type *ty) {
   }
   error("サポートしていない型です");
 }
-
-

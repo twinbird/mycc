@@ -1,7 +1,7 @@
+#include "mycc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mycc.h"
 
 // =======================
 // 抽象構文木
@@ -77,11 +77,7 @@ Node *postfix() {
   if (consume("[")) {
     Node *e = expr();
     expect("]");
-    n = new_node(
-          ND_DEREF, 
-          new_node(ND_ADD, n, e),
-          NULL
-        );
+    n = new_node(ND_DEREF, new_node(ND_ADD, n, e), NULL);
   }
   return n;
 }
@@ -321,7 +317,8 @@ Node *stmt() {
   return node;
 }
 
-// function-definition = "int" ident "(" (("int" ident ",")* "int" ident)? ")" compound-stmt
+// function-definition = "int" ident "(" (("int" ident ",")* "int" ident)? ")"
+// compound-stmt
 Node *function_definition(Token *fname_tok) {
   locals = NULL;
 
