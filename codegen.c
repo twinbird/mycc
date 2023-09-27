@@ -15,17 +15,16 @@ void comment_gen(char *str) {
   printf("#%s\n", str);
 }
 
-// 指定nodeのローカル変数へのアドレスをスタックに積む
-void gen_lval(Node *node) {
+// 指定nodeの変数へのアドレスをスタックに積む
+void gen_var_addr(Node *node) {
   if (node->kind != ND_LVAR) {
     error("代入の左辺値が変数ではありません");
   }
   if (!node->var) {
-    error("varが設定されていないgen_lval");
+    error("varが設定されていないgen_var_addr");
   }
 
-  printf("  mov rax, rbp\n");
-  printf("  sub rax, %d\n", node->var->offset);
+  printf("  lea rax, [rbp-%d]\n", node->var->offset);
   printf("  push rax\n");
 }
 
@@ -71,7 +70,7 @@ void set_function_params(Node *node) {
 void set_callee_arguments(Node *func_node) {
   int i;
   for (i = 0; i < 6 && func_node->arguments[i]; i++) {
-    gen_lval(func_node->arguments[i]);
+    gen_var_addr(func_node->arguments[i]);
     printf("  pop rax\n");
 
     switch (i) {
@@ -134,7 +133,7 @@ void gen(Node *node) {
     return;
   case ND_LVAR:
     comment_gen("ND_LVAR");
-    gen_lval(node);
+    gen_var_addr(node);
     if (is_array(node->var->ty)) {
       // 先頭にそのままアドレスを積んでおく
     } else {
@@ -145,7 +144,7 @@ void gen(Node *node) {
     return;
   case ND_ADDR:
     comment_gen("ND_ADDR");
-    gen_lval(node->lhs);
+    gen_var_addr(node->lhs);
     return;
   case ND_DEREF:
     comment_gen("ND_DEREF");
@@ -159,7 +158,7 @@ void gen(Node *node) {
     if (node->lhs->kind == ND_DEREF) {
       gen(node->lhs->lhs);
     } else {
-      gen_lval(node->lhs);
+      gen_var_addr(node->lhs);
     }
     gen(node->rhs);
 
