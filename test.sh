@@ -135,6 +135,8 @@ assert 30 'int main() { int a[5]; a[0]=0; a[1]=10; a[2]=20; a[3]=30; a[4]=40; re
 assert 40 'int main() { int a[5]; a[0]=0; a[1]=10; a[2]=20; a[3]=30; a[4]=40; return 4[a];}'
 
 # global variable
-assert 1 'int global_int; int *global_ptr; int global_ary[10]; int main() { int a; a=1; return a; }'
+assert 7 'int global_int; int main() { int a; a = 10; global_int = a - 3; return global_int; }'
+assert 4 'int *global_ptr; int main() { int a; a = 10; global_ptr = &a; *global_ptr = *global_ptr - 6; return *global_ptr; }'
+assert 2 'int global_ary[3]; int main() { global_ary[0] = 1; global_ary[1] = 2; global_ary[2] = 3; return global_ary[1]; }'
 
 echo OK

@@ -15,14 +15,19 @@ void comment_gen(char *str) { printf("#%s\n", str); }
 
 // 指定nodeの変数へのアドレスをスタックに積む
 void gen_var_addr(Node *node) {
-  if (node->kind != ND_LVAR) {
+  if (node->kind != ND_LVAR && node->kind != ND_GVAR) {
     error("代入の左辺値が変数ではありません");
   }
-  if (!node->var) {
+  if (node->var == NULL && node->gvar == NULL) {
     error("varが設定されていないgen_var_addr");
   }
 
-  printf("  lea rax, [rbp-%d]\n", node->var->offset);
+  if (node->kind == ND_LVAR) {
+    printf("  lea rax, [rbp-%d]\n", node->var->offset);
+  }
+  if (node->kind == ND_GVAR) {
+    printf("  lea rax, %s[rip]\n", strndup(node->gvar->name, node->gvar->len));
+  }
   printf("  push rax\n");
 }
 
@@ -131,6 +136,17 @@ void gen(Node *node) {
     comment_gen("ND_LVAR");
     gen_var_addr(node);
     if (is_array(node->var->ty)) {
+      // 先頭にそのままアドレスを積んでおく
+    } else {
+      printf("  pop rax\n");
+      printf("  mov rax, [rax]\n");
+      printf("  push rax\n");
+    }
+    return;
+  case ND_GVAR:
+    comment_gen("ND_GVAR");
+    gen_var_addr(node);
+    if (is_array(node->gvar->ty)) {
       // 先頭にそのままアドレスを積んでおく
     } else {
       printf("  pop rax\n");
@@ -305,9 +321,12 @@ void gen(Node *node) {
 
 void codegen() {
   printf(".intel_syntax noprefix\n");
-  printf(".global main\n");
 
+  printf(".data\n");
   gen_global();
+
+  printf(".text\n");
+  printf(".global main\n");
 
   for (int i = 0; code[i]; i++) {
     gen(code[i]);

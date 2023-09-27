@@ -54,17 +54,23 @@ Node *primary() {
   // 変数
   if (tok) {
     Node *node = calloc(1, sizeof(Node));
-    node->kind = ND_LVAR;
 
     LVar *lvar = find_lvar(tok);
     if (lvar) {
+      node->kind = ND_LVAR;
       node->ty = lvar->ty;
       node->var = lvar;
-    } else {
-      error_at(tok->str, "宣言されていない変数です");
+      return node;
+    }
+    GVar *gvar = find_gvar(tok);
+    if (gvar) {
+      node->kind = ND_GVAR;
+      node->ty = gvar->ty;
+      node->gvar = gvar;
+      return node;
     }
 
-    return node;
+    error_at(tok->str, "宣言されていない変数です");
   }
 
   // 数値

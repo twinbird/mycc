@@ -113,6 +113,7 @@ typedef enum {
   ND_LT,  // <
   ND_LE,  // <=
   ND_LVAR,// ローカル変数
+  ND_GVAR,// グローバル変数
   ND_ASSIGN, // =
   ND_RETURN, // return
   ND_IF, // if
@@ -143,6 +144,7 @@ struct Node {
   Node *params[6];    // 関数呼び出し時のパラメータ
   Node *arguments[6]; // 関数定義の仮引数
   LVar *var;          // kindがND_LVARの場合のローカル変数
+  GVar *gvar;         // kindがND_GVARの場合のグローバル変数
   LVar *locals;       // 関数定義で使うローカル変数のリスト
   int stack_size;     // 関数定義で使うローカル変数のスタックサイズ
 };
