@@ -17,6 +17,12 @@ Type *type_int() {
   ty->ty = P_INT;
   return ty;
 }
+// char型を返す
+Type *type_char() {
+  Type *ty = calloc(1, sizeof(Type));
+  ty->ty = P_CHAR;
+  return ty;
+}
 
 // 指定型を示す配列型を返す
 Type *array_of(Type *to, int size) {
@@ -71,6 +77,9 @@ int size_of(Type *ty) {
   }
   if (ty->ty == P_INT) {
     return 8;
+  }
+  if (ty->ty == P_CHAR) {
+    return 1;
   }
   if (ty->ty == P_ARRAY) {
     return ty->size * size_of(ty->ptr_to);

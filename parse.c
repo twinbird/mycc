@@ -213,18 +213,18 @@ Node *compound_stmt() {
   return NULL;
 }
 
-// type_declare = "int" "*"*
+// type_specifier = ("int" | "char") "*"*
 Type *type_specifier() {
-  if (!consume("int")) {
+  Type *ty = NULL;
+  if (consume("int")) {
+    ty = type_int();
+  } else if (consume("char")) {
+    ty = type_char();
+  } else {
     return NULL;
   }
-  Type *ty = calloc(1, sizeof(Type));
-  ty->ty = P_INT;
   while (consume("*")) {
-    Type *t = calloc(1, sizeof(Type));
-    t->ty = P_PTR;
-    t->ptr_to = ty;
-    ty = t;
+    ty = pointer_to(ty);
   }
   return ty;
 }
@@ -240,7 +240,7 @@ Type *array_specifier(Type *base) {
 }
 
 // stmt = expr ";"
-//      | "int" "*"* ident ";"
+//      | type_specifier* ident ";"
 //      | "return" expr ";"
 //      | "if" "(" expr ")" stmt
 //      | "while" "(" expr ")" stmt
@@ -323,7 +323,7 @@ Node *stmt() {
   return node;
 }
 
-// function-definition = "int" ident "(" (("int" ident ",")* "int" ident)? ")"
+// function-definition = type_specifier ident "(" (type_specifier ident ",")* (type_specifier ident)? ")"
 // compound-stmt
 Node *function_definition(Token *fname_tok) {
   locals = NULL;

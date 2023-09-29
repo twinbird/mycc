@@ -139,4 +139,7 @@ assert 7 'int global_int; int main() { int a; a = 10; global_int = a - 3; return
 assert 4 'int *global_ptr; int main() { int a; a = 10; global_ptr = &a; *global_ptr = *global_ptr - 6; return *global_ptr; }'
 assert 2 'int global_ary[3]; int main() { global_ary[0] = 1; global_ary[1] = 2; global_ary[2] = 3; return global_ary[1]; }'
 
+# char type
+assert 1 'int main() { char c; return 1; }'
+
 echo OK

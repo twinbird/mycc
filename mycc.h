@@ -45,6 +45,7 @@ bool at_eof();
 // プリミティブ型
 enum PType {
   P_INT,   // int
+  P_CHAR,  // char
   P_PTR,   // ポインタ
   P_ARRAY, // 配列
 };
@@ -59,12 +60,16 @@ struct Type {
 
 // int型を返す
 Type *type_int();
+// char型を返す
+Type *type_char();
 // 引数の型のサイズを返す
 int size_of(Type *ty);
 // 指定型を示す配列型を返す
 Type *array_of(Type *to, int size);
 // 配列なら1
 bool is_array(Type *t);
+// 指定型を示すポインタ型を返す
+Type *pointer_to(Type *to);
 // ポインタ型なら1
 bool is_pointer(Type *t);
 

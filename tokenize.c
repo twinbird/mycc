@@ -149,6 +149,12 @@ Token *tokenize(char *p) {
       continue;
     }
 
+    if (is_reserve_word(p, "char")) {
+      cur = new_token(TK_RESERVED, cur, p, strlen("char"));
+      p += strlen("char");
+      continue;
+    }
+
     if (is_ident_first_char(*p)) {
       int n = 0;
       char *q = p;
