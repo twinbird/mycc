@@ -31,6 +31,26 @@ void gen_var_addr(Node *node) {
   printf("  push rax\n");
 }
 
+// スタック先頭のアドレスの変数の値をスタック先頭に積む
+// tyは変数の型
+void gen_var_val(Type *ty) {
+  // 配列の場合には先頭にそのままアドレスを積んでおく
+  if (is_array(ty)) {
+    return;
+  } 
+
+  if (ty->ty == P_CHAR) {
+    printf("  pop rax\n");
+    printf("  movsx eax, BYTE PTR [rax]\n");
+    printf("  push rax\n");
+    return;
+  }
+
+  printf("  pop rax\n");
+  printf("  mov rax, [rax]\n");
+  printf("  push rax\n");
+}
+
 // グローバル変数の領域を出力する
 void gen_global() {
   for (GVar *var = globals; var; var = var->next) {
@@ -135,24 +155,12 @@ void gen(Node *node) {
   case ND_LVAR:
     comment_gen("ND_LVAR");
     gen_var_addr(node);
-    if (is_array(node->var->ty)) {
-      // 先頭にそのままアドレスを積んでおく
-    } else {
-      printf("  pop rax\n");
-      printf("  mov rax, [rax]\n");
-      printf("  push rax\n");
-    }
+    gen_var_val(node->var->ty);
     return;
   case ND_GVAR:
     comment_gen("ND_GVAR");
     gen_var_addr(node);
-    if (is_array(node->gvar->ty)) {
-      // 先頭にそのままアドレスを積んでおく
-    } else {
-      printf("  pop rax\n");
-      printf("  mov rax, [rax]\n");
-      printf("  push rax\n");
-    }
+    gen_var_val(node->gvar->ty);
     return;
   case ND_ADDR:
     comment_gen("ND_ADDR");
@@ -174,10 +182,14 @@ void gen(Node *node) {
     }
     gen(node->rhs);
 
-    printf("  pop rdi\n");
+    printf("  pop rdx\n");
     printf("  pop rax\n");
-    printf("  mov [rax], rdi\n");
-    printf("  push rdi\n");
+    if (node->lhs->ty->ty == P_CHAR) {
+      printf("  mov [rax], dl\n");
+    } else {
+      printf("  mov [rax], rdx\n");
+    }
+    printf("  push rdx\n");
     return;
   case ND_RETURN:
     comment_gen("ND_RETURN");
