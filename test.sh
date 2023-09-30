@@ -18,15 +18,6 @@ assert() {
   fi
 }
 
-out() {
-  input="$1"
-
-  cc -c test.c -o test.o
-  ./mycc "$input" > tmp.s
-  cc -o tmp tmp.s test.o
-  ./tmp
-}
-
 assert 0 'int main() { return 0;}'
 assert 42 'int main() { return 42;}'
 assert 21 'int main() { return 5+20-4;}'
@@ -119,10 +110,10 @@ assert 20 'int main() { int a; int *ref; a = 20; ref = &a; return *ref;}'
 assert 4 'int main() { int x; int *y; x = 1; y = &x; *y = 4; return x; }'
 
 # sizeof
-assert 8 'int main() { return sizeof(1);}'
-assert 8 'int main() { int x; x = 10; return sizeof(x + 3); }'
+assert 4 'int main() { return sizeof(1);}'
+assert 4 'int main() { int x; x = 10; return sizeof(x + 3); }'
 assert 8 'int main() { int *p; return sizeof(p); }'
-assert 8 'int main() { int *p; return sizeof(*p); }'
+assert 4 'int main() { int *p; return sizeof(*p); }'
 
 # pointer calculation
 assert 3 'int main() { int *p; alloc4(&p, 1,2,3,4); int *q; q = p + 2; return *q; }'

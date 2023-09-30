@@ -46,9 +46,40 @@ void gen_var_val(Type *ty) {
     return;
   }
 
+  if (ty->ty == P_INT) {
+    printf("  pop rax\n");
+    printf("  mov eax, [rax]\n");
+    printf("  push rax\n");
+    return;
+  }
+
   printf("  pop rax\n");
   printf("  mov rax, [rax]\n");
   printf("  push rax\n");
+}
+
+// スタック先頭の値をスタック2番目の値のアドレスへコピーする
+// コピーした値をスタック先頭へ積む
+void assign_as(Type *ty) {
+  // src
+  printf("  pop rdx\n");
+  // dst
+  printf("  pop rax\n");
+
+  switch (ty->ty) {
+  case P_CHAR:
+    printf("  mov [rax], dl\n");
+    break;
+  case P_INT:
+    printf("  mov [rax], edx\n");
+    break;
+  default:
+    printf("  mov [rax], rdx\n");
+    break;
+  }
+
+  // srcをスタック先頭へ(代入式は代入した値が評価結果)
+  printf("  push rdx\n");
 }
 
 // グローバル変数の領域を出力する
@@ -63,6 +94,7 @@ void gen_global() {
 // 関数呼び出し時のパラメータをレジスタへ設定する
 void set_function_params(Node *node) {
   int i;
+
   for (i = 0; node->params[i]; i++) {
     gen(node->params[i]);
     printf("  pop rax\n");
@@ -181,15 +213,8 @@ void gen(Node *node) {
       gen_var_addr(node->lhs);
     }
     gen(node->rhs);
+    assign_as(node->lhs->ty);
 
-    printf("  pop rdx\n");
-    printf("  pop rax\n");
-    if (node->lhs->ty->ty == P_CHAR) {
-      printf("  mov [rax], dl\n");
-    } else {
-      printf("  mov [rax], rdx\n");
-    }
-    printf("  push rdx\n");
     return;
   case ND_RETURN:
     comment_gen("ND_RETURN");

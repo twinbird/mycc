@@ -76,7 +76,7 @@ int size_of(Type *ty) {
     return 8;
   }
   if (ty->ty == P_INT) {
-    return 8;
+    return 4;
   }
   if (ty->ty == P_CHAR) {
     return 1;
