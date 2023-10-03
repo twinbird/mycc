@@ -124,30 +124,56 @@ void set_function_params(Node *node) {
 // 関数が呼び出された際の仮引数をスタックへ割り当てる
 void set_callee_arguments(Node *func_node) {
   int i;
+  LVar *arg = func_node->locals;
   for (i = 0; i < 6 && func_node->arguments[i]; i++) {
     gen_var_addr(func_node->arguments[i]);
     printf("  pop rax\n");
 
     switch (i) {
     case 0:
-      printf("  mov [rax], rdi\n");
+      if (size_of(arg->ty) == 4) {
+        printf("  mov [rax], edi\n");
+      } else {
+        printf("  mov [rax], rdi\n");
+      }
       break;
     case 1:
-      printf("  mov [rax], rsi\n");
+      if (size_of(arg->ty) == 4) {
+        printf("  mov [rax], esi\n");
+      } else {
+        printf("  mov [rax], rsi\n");
+      }
       break;
     case 2:
-      printf("  mov [rax], rdx\n");
+      if (size_of(arg->ty) == 4) {
+        printf("  mov [rax], edx\n");
+      } else {
+        printf("  mov [rax], rdx\n");
+      }
       break;
     case 3:
-      printf("  mov [rax], rcx\n");
+      if (size_of(arg->ty) == 4) {
+        printf("  mov [rax], ecx\n");
+      } else {
+        printf("  mov [rax], rcx\n");
+      }
       break;
     case 4:
-      printf("  mov [rax], r8\n");
+      if (size_of(arg->ty) == 4) {
+        printf("  mov [rax], r8d\n");
+      } else {
+        printf("  mov [rax], r8\n");
+      }
       break;
     case 5:
-      printf("  mov [rax], r9\n");
+      if (size_of(arg->ty) == 4) {
+        printf("  mov [rax], r9d\n");
+      } else {
+        printf("  mov [rax], r9\n");
+      }
       break;
     }
+    arg = arg->next;
   }
 }
 
