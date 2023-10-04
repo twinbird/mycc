@@ -133,5 +133,9 @@ assert 2 'int global_ary[3]; int main() { global_ary[0] = 1; global_ary[1] = 2; 
 # char type
 assert 2 'int main() { char c; c = 1; return c + 1; }'
 assert 3 'int main() { char x[3]; x[0] = -1; x[1] = 2; int y; y = 4; return x[0] + y; }'
+assert 5 'char add(char n, char m) { return n + m; } int main() {return add(2, 3);}'
+
+# long type
+
 
 echo OK

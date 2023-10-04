@@ -133,6 +133,8 @@ void set_callee_arguments(Node *func_node) {
     case 0:
       if (size_of(arg->ty) == 4) {
         printf("  mov [rax], edi\n");
+      } else if (size_of(arg->ty) == 1) {
+        printf("  mov [rax], dil\n");
       } else {
         printf("  mov [rax], rdi\n");
       }
@@ -140,6 +142,8 @@ void set_callee_arguments(Node *func_node) {
     case 1:
       if (size_of(arg->ty) == 4) {
         printf("  mov [rax], esi\n");
+      } else if (size_of(arg->ty) == 1) {
+        printf("  mov [rax], sil\n");
       } else {
         printf("  mov [rax], rsi\n");
       }
@@ -147,6 +151,8 @@ void set_callee_arguments(Node *func_node) {
     case 2:
       if (size_of(arg->ty) == 4) {
         printf("  mov [rax], edx\n");
+      } else if (size_of(arg->ty) == 1) {
+        printf("  mov [rax], dl\n");
       } else {
         printf("  mov [rax], rdx\n");
       }
@@ -154,6 +160,8 @@ void set_callee_arguments(Node *func_node) {
     case 3:
       if (size_of(arg->ty) == 4) {
         printf("  mov [rax], ecx\n");
+      } else if (size_of(arg->ty) == 1) {
+        printf("  mov [rax], cl\n");
       } else {
         printf("  mov [rax], rcx\n");
       }
@@ -161,6 +169,8 @@ void set_callee_arguments(Node *func_node) {
     case 4:
       if (size_of(arg->ty) == 4) {
         printf("  mov [rax], r8d\n");
+      } else if (size_of(arg->ty) == 1) {
+        printf("  mov [rax], r8b\n");
       } else {
         printf("  mov [rax], r8\n");
       }
@@ -168,6 +178,8 @@ void set_callee_arguments(Node *func_node) {
     case 5:
       if (size_of(arg->ty) == 4) {
         printf("  mov [rax], r9d\n");
+      } else if (size_of(arg->ty) == 1) {
+        printf("  mov [rax], r9b\n");
       } else {
         printf("  mov [rax], r9\n");
       }
