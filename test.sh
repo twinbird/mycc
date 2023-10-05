@@ -114,6 +114,8 @@ assert 4 'int main() { return sizeof(1);}'
 assert 4 'int main() { int x; x = 10; return sizeof(x + 3); }'
 assert 8 'int main() { int *p; return sizeof(p); }'
 assert 4 'int main() { int *p; return sizeof(*p); }'
+assert 1 'int main() { char c; return sizeof(c); }'
+assert 8 'int main() { long l; return sizeof(l); }'
 
 # pointer calculation
 assert 3 'int main() { int *p; alloc4(&p, 1,2,3,4); int *q; q = p + 2; return *q; }'
@@ -136,6 +138,7 @@ assert 3 'int main() { char x[3]; x[0] = -1; x[1] = 2; int y; y = 4; return x[0]
 assert 5 'char add(char n, char m) { return n + m; } int main() {return add(2, 3);}'
 
 # long type
-
+assert 2 'int main() { long c; c = 1; return c + 1; }'
+assert 5 'long add(long n, long m) { return n + m; } int main() {return add(2, 3);}'
 
 echo OK

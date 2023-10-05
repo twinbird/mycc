@@ -155,6 +155,12 @@ Token *tokenize(char *p) {
       continue;
     }
 
+    if (is_reserve_word(p, "long")) {
+      cur = new_token(TK_RESERVED, cur, p, strlen("long"));
+      p += strlen("long");
+      continue;
+    }
+
     if (is_ident_first_char(*p)) {
       int n = 0;
       char *q = p;

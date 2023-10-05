@@ -46,6 +46,7 @@ bool at_eof();
 enum PType {
   P_INT,   // int
   P_CHAR,  // char
+  P_LONG,  // long
   P_PTR,   // ポインタ
   P_ARRAY, // 配列
 };
@@ -62,6 +63,8 @@ struct Type {
 Type *type_int();
 // char型を返す
 Type *type_char();
+// long型を返す
+Type *type_long();
 // 引数の型のサイズを返す
 int size_of(Type *ty);
 // 指定型を示す配列型を返す

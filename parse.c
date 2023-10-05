@@ -220,6 +220,8 @@ Type *type_specifier() {
     ty = type_int();
   } else if (consume("char")) {
     ty = type_char();
+  } else if (consume("long")) {
+    ty = type_long();
   } else {
     return NULL;
   }

@@ -24,6 +24,13 @@ Type *type_char() {
   return ty;
 }
 
+// long型を返す
+Type *type_long() {
+  Type *ty = calloc(1, sizeof(Type));
+  ty->ty = P_LONG;
+  return ty;
+}
+
 // 指定型を示す配列型を返す
 Type *array_of(Type *to, int size) {
   Type *ty = calloc(1, sizeof(Type));
@@ -73,6 +80,9 @@ Type *attach_type(Node *node) {
 // 引数のノードの型のサイズを返す
 int size_of(Type *ty) {
   if (ty->ty == P_PTR) {
+    return 8;
+  }
+  if (ty->ty == P_LONG) {
     return 8;
   }
   if (ty->ty == P_INT) {
