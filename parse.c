@@ -30,7 +30,10 @@ Node *new_node_num(int val) {
 //         | ident ("(" ((expr ",")* expr)? ")")?
 //         | "(" expr ")"
 //         | ident
+//         | "string literal"
 Node *primary() {
+  Token *tok;
+
   // グルーピングのかっこ
   if (consume("(")) {
     Node *node = expr();
@@ -38,8 +41,20 @@ Node *primary() {
     return node;
   }
 
+  // 文字列リテラル
+  tok = consume_string();
+  if (tok) {
+    Node *node = new_node(ND_LITERAL, NULL, NULL);
+    Literal *lit = find_literal(tok);
+    if (!lit) {
+      lit = append_literals(tok);
+    }
+    node->literal = lit;
+    return node;
+  }
+
   // 関数呼び出し
-  Token *tok = consume_ident();
+  tok = consume_ident();
   if (tok && consume("(")) {
     Node *node = calloc(1, sizeof(Node));
     node->kind = ND_FCALL;

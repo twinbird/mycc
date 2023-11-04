@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int foo() { return 1; }
 
@@ -18,4 +19,8 @@ void alloc4(int **p, int a, int b, int c, int d) {
   ip[3] = d;
 
   *p = ip;
+}
+
+int mystrlen(char *s) {
+  return strlen(s);
 }

@@ -67,6 +67,10 @@ Type *attach_type(Node *node) {
     node->ty = pointer_to(t);
     return node->ty;
   }
+  // 文字列リテラルは文字ポインタ
+  if (node->kind == ND_LITERAL) {
+    return pointer_to(type_char());
+  }
   // 型がついているものはプリミティブ型
   if (node->ty) {
     return node->ty;

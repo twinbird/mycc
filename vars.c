@@ -54,3 +54,28 @@ GVar *append_globals(Token *tok, Type *ty) {
 
   return gvar;
 }
+
+// =======================
+// 文字列リテラル
+// =======================
+// 文字列リテラルのリスト先頭へのポインタ
+Literal *literals;
+
+// 引数のトークンのリテラルを探す
+Literal *find_literal(Token *tok) {
+  for (Literal *lit = literals; lit; lit = lit->next)
+    if (lit->tok->len == tok->len && !memcmp(tok->str, lit->tok->str, tok->len))
+      return lit;
+  return NULL;
+}
+
+// 文字列リテラルのリストへ引数のトークンを加える
+Literal *append_literals(Token *tok) {
+  Literal *lit;
+  lit = calloc(1, sizeof(Literal));
+  lit->next = literals;
+  lit->tok = tok;
+  literals = lit;
+
+  return lit;
+}

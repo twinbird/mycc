@@ -13,6 +13,15 @@ int branch_label_counter;
 // デバッグアセンブリを挿入
 void comment_gen(char *str) { printf("#%s\n", str); }
 
+// 指定リテラルノードのリテラルへのアドレスをスタックへ積む
+void gen_literal_addr(Node *node) {
+  if (node->kind != ND_LITERAL) {
+    error("リテラル以外のノードがリテラルとして到達した");
+  }
+  printf("  mov rax, OFFSET FLAT:.LC%d\n", node->literal->n);
+  printf("  push rax\n");
+}
+
 // 指定nodeの変数へのアドレスをスタックに積む
 void gen_var_addr(Node *node) {
   if (node->kind != ND_LVAR && node->kind != ND_GVAR) {
@@ -88,6 +97,17 @@ void gen_global() {
     char *name = strndup(var->name, var->len);
     printf("%s:\n", name);
     printf("  .zero %d\n", size_of(var->ty));
+  }
+}
+
+// 文字列リテラルの領域を出力する
+void gen_literal() {
+  int i = 0;
+  for (Literal *lit = literals; lit; lit = lit->next) {
+    lit->n = i;
+    printf(".LC%d:\n", i);
+    printf("  .string %s\n", strndup(lit->tok->str, lit->tok->len));
+    i++;
   }
 }
 
@@ -221,6 +241,10 @@ void gen(Node *node) {
   case ND_NUM:
     comment_gen("ND_NUM");
     printf("  push %d\n", node->val);
+    return;
+  case ND_LITERAL:
+    comment_gen("ND_LITERAL");
+    gen_literal_addr(node);
     return;
   case ND_LVAR:
     comment_gen("ND_LVAR");
@@ -399,6 +423,7 @@ void codegen() {
 
   printf(".data\n");
   gen_global();
+  gen_literal();
 
   printf(".text\n");
   printf(".global main\n");

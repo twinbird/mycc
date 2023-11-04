@@ -4,9 +4,9 @@ assert() {
   expected="$1"
   input="$2"
 
-  cc -c test.c -o test.o
+  cc -static -c test.c -o test.o
   ./mycc "$input" > tmp.s
-  cc -o tmp tmp.s test.o
+  cc -static -o tmp tmp.s test.o
   ./tmp
   actual="$?"
 
@@ -140,5 +140,8 @@ assert 5 'char add(char n, char m) { return n + m; } int main() {return add(2, 3
 # long type
 assert 2 'int main() { long c; c = 1; return c + 1; }'
 assert 5 'long add(long n, long m) { return n + m; } int main() {return add(2, 3);}'
+
+# string literal
+assert 12 'int main() { char *str; str = "hello, world"; return mystrlen(str); }'
 
 echo OK

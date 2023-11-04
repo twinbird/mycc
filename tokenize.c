@@ -31,6 +31,17 @@ Token *consume_ident() {
   return NULL;
 }
 
+// 現在着目しているトークンが文字列ならそれを返す
+// そうでなければNULLを返す
+Token *consume_string() {
+  if (token->kind == TK_STRING) {
+    Token *ret = token;
+    token = token->next;
+    return ret;
+  }
+  return NULL;
+}
+
 // 次のトークンが期待している記号の時には、トークンを1つ読み進める。
 // それ以外の時にはエラーを報告する。
 void expect(char *op) {
@@ -82,6 +93,7 @@ bool is_reserve_word(char *p, char *word) {
 }
 
 Token *tokenize(char *p) {
+  char *q;
   Token head;
   head.next = NULL;
   Token *cur = &head;
@@ -89,6 +101,15 @@ Token *tokenize(char *p) {
   while (*p) {
     if (isspace(*p)) {
       p++;
+      continue;
+    }
+
+    if (*p == '"') {
+      q = p;
+      p++;
+      while (*p != '"') p++;
+      p++;
+      cur = new_token(TK_STRING, cur, q, p-q);
       continue;
     }
 

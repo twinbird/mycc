@@ -15,6 +15,7 @@ typedef enum {
   TK_RESERVED, // 予約語
   TK_IDENT,    // 識別子
   TK_NUM,      // 整数トークン
+  TK_STRING,   // 文字列リテラル
   TK_EOF,      // 入力の終わり
 } TokenKind;
 
@@ -34,6 +35,7 @@ extern Token *token;
 Token *tokenize(char *p);
 bool consume(char *op);
 Token *consume_ident();
+Token *consume_string();
 void expect(char *op);
 int expect_number();
 bool at_eof();
@@ -107,6 +109,20 @@ extern GVar *globals;
 GVar *find_gvar(Token *tok);
 GVar *append_globals(Token *tok, Type *ty);
 
+// ====================
+// 文字列リテラル
+// ====================
+typedef struct Literal Literal;
+struct Literal {
+  Literal *next;  // 次の変数かNULL
+  Token *tok;     // リテラルトークン
+  int n;          // 通し番号
+};
+// グローバル変数のリスト
+extern Literal *literals;
+Literal *find_literal(Token *tok);
+Literal *append_literals(Token *tok);
+
 // =======================
 // 抽象構文木
 // =======================
@@ -133,6 +149,7 @@ typedef enum {
   ND_DEREF, // *(単項)
   ND_ADDR, // &(単項)
   ND_VAR_DECLARE, // 変数宣言
+  ND_LITERAL, // 文字列リテラル
 } NodeKind;
 
 typedef struct Node Node;
@@ -155,6 +172,7 @@ struct Node {
   GVar *gvar;         // kindがND_GVARの場合のグローバル変数
   LVar *locals;       // 関数定義で使うローカル変数のリスト
   int stack_size;     // 関数定義で使うローカル変数のスタックサイズ
+  Literal *literal;   // 文字列リテラルへのポインタ
 };
 Node *expr();
 Node *stmt();
