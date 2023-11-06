@@ -104,6 +104,15 @@ Token *tokenize(char *p) {
       continue;
     }
 
+    // ブロックコメント
+    if (strncmp(p, "/*", 2) == 0) {
+      q = strstr(p + 2, "*/");
+      if (!q)
+        error_at(p, "コメントが閉じられていません");
+      p = q + 2;
+      continue;
+    }
+
     if (*p == '"') {
       q = p;
       p++;

@@ -145,4 +145,7 @@ assert 5 'long add(long n, long m) { return n + m; } int main() {return add(2, 3
 # string literal
 assert 12 'int main() { char *str; str = "hello, world"; return mystrlen(str); }'
 
+# comment
+assert 1 'int main() { /* this is a comment */ return 1; }'
+
 echo OK
