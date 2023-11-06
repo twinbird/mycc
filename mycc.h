@@ -3,6 +3,8 @@
 // ====================
 // エラー表示
 // ====================
+// 入力プログラムファイル名
+extern char *src_filename;
 // 入力プログラム
 extern char *user_input;
 void error(char *fmt, ...);
