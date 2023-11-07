@@ -96,7 +96,13 @@ void gen_global() {
   for (GVar *var = globals; var; var = var->next) {
     char *name = strndup(var->name, var->len);
     printf("%s:\n", name);
-    printf("  .zero %d\n", size_of(var->ty));
+    if (var->is_inited) {
+      if (var->ty->ty == P_INT || var->ty->ty == P_LONG) {
+        printf("  .long %d\n", var->init_int);
+      }
+    } else {
+      printf("  .zero %d\n", size_of(var->ty));
+    }
   }
 }
 

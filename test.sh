@@ -148,4 +148,7 @@ assert 12 'int main() { char *str; str = "hello, world"; return mystrlen(str); }
 # comment
 assert 1 'int main() { /* this is a comment */ return 1; }'
 
+# global initialization expression
+assert 1 'int a = 1; int main() { return a; }'
+
 echo OK

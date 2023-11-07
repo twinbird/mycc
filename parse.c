@@ -387,7 +387,14 @@ void program() {
     } else {
       // グローバル変数の処理
       ty = array_specifier(ty);
-      append_globals(tok, ty);
+      GVar *gv = append_globals(tok, ty);
+
+      // 初期化式
+      if (consume("=")) {
+        gv->is_inited = 1;
+        gv->init_int = expect_number();
+      }
+
       expect(";");
     }
   }
