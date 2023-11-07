@@ -101,12 +101,13 @@ LVar *append_locals(Token *tok, Type *ty);
 // ====================
 typedef struct GVar GVar;
 struct GVar {
-  GVar *next;    // 次の変数かNULL
-  char *name;    // 変数の名前
-  int len;       // 名前の長さ
-  Type *ty;      // 型
-  int is_inited; // 初期化式なら1
-  int init_int;  // int型の初期値
+  GVar *next;      // 次の変数かNULL
+  char *name;      // 変数の名前
+  int len;         // 名前の長さ
+  Type *ty;        // 型
+  int is_inited;   // 初期化式なら1
+  int init_int;    // int型の初期値
+  char *init_str;  // 文字配列型の初期値
 };
 // グローバル変数のリスト
 extern GVar *globals;

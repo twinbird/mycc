@@ -96,9 +96,15 @@ void gen_global() {
   for (GVar *var = globals; var; var = var->next) {
     char *name = strndup(var->name, var->len);
     printf("%s:\n", name);
+    // 初期化式があるか
     if (var->is_inited) {
+      // 数値
       if (var->ty->ty == P_INT || var->ty->ty == P_LONG) {
         printf("  .long %d\n", var->init_int);
+      }
+      // 文字列
+      if (is_array(var->ty) && var->ty->ptr_to->ty == P_CHAR) {
+        printf("  .string %s\n", var->init_str);
       }
     } else {
       printf("  .zero %d\n", size_of(var->ty));

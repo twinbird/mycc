@@ -150,5 +150,6 @@ assert 1 'int main() { /* this is a comment */ return 1; }'
 
 # global initialization expression
 assert 1 'int a = 1; int main() { return a; }'
+assert 5 'char str[5] = "HELLO"; int main() { return mystrlen(str); }'
 
 echo OK

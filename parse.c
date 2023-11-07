@@ -1,3 +1,4 @@
+#define _XOPEN_SOURCE 700
 #include "mycc.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -374,6 +375,26 @@ Node *function_definition(Token *fname_tok) {
   return node;
 }
 
+// グローバル変数の初期化式
+void global_init(Type *ty, GVar *gv) {
+  Token *tok;
+
+  // 文字列
+  if (is_array(ty) && ty->ptr_to->ty == P_CHAR) {
+    gv->is_inited = 1;
+    tok = consume_string();
+    gv->init_str = strndup(tok->str, tok->len);
+    return;
+  }
+  // 数値
+  if (ty->ty == P_INT || ty->ty == P_LONG) {
+    gv->is_inited = 1;
+    gv->init_int = expect_number();
+    return;
+  }
+  error("サポートしていない初期化式です");
+}
+
 void program() {
   int i = 0;
   while (!at_eof()) {
@@ -391,10 +412,8 @@ void program() {
 
       // 初期化式
       if (consume("=")) {
-        gv->is_inited = 1;
-        gv->init_int = expect_number();
+        global_init(ty, gv);
       }
-
       expect(";");
     }
   }
