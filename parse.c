@@ -271,12 +271,20 @@ Node *stmt() {
   if (ty) {
     Token *tok = consume_ident();
     ty = array_specifier(ty);
-    node->var = append_locals(tok, ty);
-    node->ty = ty;
-    expect(";");
 
     node = calloc(1, sizeof(Node));
+    node->var = append_locals(tok, ty);
+    node->ty = ty;
+
+    if (consume("=")) {
+      node->kind = ND_LVAR;
+      node = new_node(ND_ASSIGN, node, expr());
+      expect(";");
+      return node;
+    }
+
     node->kind = ND_VAR_DECLARE;
+    expect(";");
     return node;
   }
 

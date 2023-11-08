@@ -152,4 +152,7 @@ assert 1 'int main() { /* this is a comment */ return 1; }'
 assert 1 'int a = 1; int main() { return a; }'
 assert 5 'char str[5] = "HELLO"; int main() { return mystrlen(str); }'
 
+# local initialization expression
+assert 1 'int main() { int a = 1; return a; }'
+
 echo OK
